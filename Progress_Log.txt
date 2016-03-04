@@ -1,0 +1,8 @@
+
+
+
+
+
+Week 2/12 - 2/19: Began writing background of Thesis proposal. This included what the benefits and drawbacks to Google and Amazon as providers are, the general idea of Kubernetes and how to use it, a very rough structure to my overall system design.
+Week 2/19 - 2/26: Continued writing thesis background, specifically adding more information on Kubernetes, fault tolerance, master-minion hierarchy, and more. Also began setting up Kubernetes in the Google cloud to begin testing how I might work with it.
+Week 2/26 - 3/4: Began design work on algorithm and came up with a first draft of algorithm without implementation. Created first of several install scriupts that will need to be run when a spot instance is obtained. Began looking at spot history data to understand how data is presented. Worked to install and debug LaTeX on development system.

@@ -1,0 +1,49 @@
+Pseudocode for Kubernetes-Based Reliable Web Service
+
+General Format/Lifecycle:
+
+Determine Lowest Cost Basleines ();
+Setup Kubernetes ();
+Monitor Load and Life of Service ();
+Shutdown ();
+
+
+Specific Features:
+
+Determine Lowest Cost Baseline (){
+	variable BASELINE = computing resources needed for 1 copy of service;
+	variable DATA = download latest Amazon Spot Price History CSV;
+	while(DATA has more){
+		Determine the cost per baseline of the given market and instance type for 1 day //1 day is arbitrary, we could do it by hour, etc.
+		Place information about this into some data structure
+	}
+	After all data is analyzed, sort the resulting data structure so lowest price-per-baseline appear first
+}
+
+Setup Kubernetes (){
+	Set Kubernetes desired state to initial value (10 services);
+	Kubernetes should choose instances based on sorted data from amazon and open as many services on each instance as allowable
+	// Kubernetes will not need much work adone to it aside from desired state
+	// Templates for instances being brought up will need to be made beforehand
+	// It will need to be determined whether these templates can install software or if that must be done another way
+}
+
+Monitor Load (){
+	//This will be always on while the service is running
+	Accept requests for service;
+	Send the request to Kubernetes;
+	Monitor the current number of requests; //HOW?
+	// With a stateless web service, is there more to be concerned with than a user initially getting to a page and downloading its content?
+	If(load > current expected capacity){
+		Raise Kubernetes desired state;
+		// Does this require a reboot of Kubernetes? Seemingly not from examples, but should test and confirm
+	}
+	Else if( (current capacity MINUS a service instance) > load){
+		Lower Kubernetes desired state;
+	}
+}
+
+//Things dealt with by Kubernetes:
+	//Load Balancing
+	//Fault detection and correction
+	// Brings up and releases instances as dictated by desired state

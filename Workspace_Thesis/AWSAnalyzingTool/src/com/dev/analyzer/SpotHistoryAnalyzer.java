@@ -32,14 +32,22 @@ public class SpotHistoryAnalyzer {
 	
 	public SpotHistoryAnalyzer(AWSCredentials cred){
 		credentials = cred;
-		ec2 = new AmazonEC2Client(credentials);
 	}
 	
 	public SpotHistoryAnalyzer(AWSCredentials cred, int mb, double av){
 		credentials = cred;
 		maxBid = mb;
 		desiredAvailability = av;
+	}
+	
+	public void init(){
 		ec2 = new AmazonEC2Client(credentials);
+		setupDictionary();
+		
+	}
+	
+	public void setupDictionary(){
+		instanceDictionary
 	}
 	
 	public void analyzeHistory(){

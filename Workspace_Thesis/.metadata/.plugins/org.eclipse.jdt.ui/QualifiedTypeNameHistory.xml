@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.amazonaws.AmazonWebServiceRequest"/>
+<fullyQualifiedTypeName name="com.amazonaws.services.ec2.model.DescribeSpotPriceHistoryRequest"/>
+<fullyQualifiedTypeName name="com.amazonaws.services.ec2.model.DescribeSpotPriceHistoryResult"/>
+</qualifiedTypeNameHistroy>

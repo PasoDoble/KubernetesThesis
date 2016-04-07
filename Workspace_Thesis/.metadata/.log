@@ -1,0 +1,618 @@
+!SESSION 2016-04-04 14:27:40.716 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -data file:/home/justin/Workspace_Thesis/ -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:08.806
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY org.eclipse.osgi 2 0 2016-04-04 14:28:15.783
+!MESSAGE While loading class "com.amazonaws.eclipse.core.AwsToolkitCore", thread "Thread[Worker-7,5,main]" timed out waiting (5001ms) for thread "Thread[Worker-1,5,main]" to finish starting bundle "com.amazonaws.eclipse.core_2.3.1.v201511040938 [922]". To avoid deadlock, thread "Thread[Worker-7,5,main]" is proceeding but "com.amazonaws.eclipse.core.AwsToolkitCore" may not be fully initialized.
+!STACK 0
+org.osgi.framework.BundleException: Unable to acquire the state change lock for the module: osgi.identity; osgi.identity="com.amazonaws.eclipse.core"; type="osgi.bundle"; version:Version="2.3.1.v201511040938"; singleton:="true" [id=922] STARTED [STARTED]
+	at org.eclipse.osgi.container.Module.lockStateChange(Module.java:329)
+	at org.eclipse.osgi.container.Module.start(Module.java:389)
+	at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:454)
+	at org.eclipse.osgi.internal.hooks.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:107)
+	at org.eclipse.osgi.internal.loader.classpath.ClasspathManager.findLocalClass(ClasspathManager.java:531)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.findLocalClass(ModuleClassLoader.java:324)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:327)
+	at org.eclipse.osgi.internal.loader.sources.SingleSourcePackage.loadClass(SingleSourcePackage.java:36)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(BundleLoader.java:398)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:352)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:344)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.loadClass(ModuleClassLoader.java:160)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at com.amazonaws.eclipse.ec2.keypairs.KeyPairManager.convertLegacyPrivateKeyFiles(KeyPairManager.java:242)
+	at com.amazonaws.eclipse.ec2.Ec2Plugin$2.run(Ec2Plugin.java:120)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:15.844
+!MESSAGE Failed to load credential profiles from (/home/justin/.aws/credentials).AWS credential profiles file not found in the given path: /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:15.964
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.361
+!MESSAGE AWS toolkit core plugin initialized after 7569 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.378
+!MESSAGE Failed to load credential profiles from (/home/justin/.aws/credentials).AWS credential profiles file not found in the given path: /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.379
+!MESSAGE No account is configued in the toolkit. Bootstrapping the credentials file at (/home/justin/.aws/credentials).
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.385
+!MESSAGE Failed to load credential profiles from (/home/justin/.aws/credentials).Unable to open the destination file.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.385
+!MESSAGE No account could be found. Switching to a temporary account.
+
+!ENTRY org.eclipse.ui 2 0 2016-04-04 14:28:16.389
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 14:28:16.744
+!MESSAGE Initialized a new Cognito identity us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 15:26:52.051
+!MESSAGE Switching to global default account
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 15:26:52.064
+!MESSAGE No profile found: default
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 15:26:52.306
+!MESSAGE The current accountId is not found in the system. Switching to the default account.
+
+!ENTRY com.amazonaws.eclipse.sdk.ui 1 0 2016-04-04 15:31:30.576
+!MESSAGE Downloading the SDK from CloudFront to location /tmp/aws-java-sdk9167389214825335269/sdk.zip
+
+!ENTRY com.amazonaws.eclipse.sdk.ui 1 0 2016-04-04 15:32:18.976
+!MESSAGE SDK download completes. Location: /tmp/aws-java-sdk9167389214825335269/sdk.zip, File-length: 166969041
+!SESSION 2016-04-04 19:02:53.556 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-04-04 19:03:06.601
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:30.915
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:36.123
+!MESSAGE No profile found: default
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:36.166
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:36.492
+!MESSAGE AWS toolkit core plugin initialized after 5578 milliseconds.
+
+!ENTRY org.eclipse.ui 2 0 2016-04-04 19:03:36.902
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:36.913
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:03:36.917
+!MESSAGE The current accountId is not found in the system. Switching to the default account.
+!SESSION 2016-04-04 19:05:52.641 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-04-04 19:06:01.410
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:20.868
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:25.229
+!MESSAGE No profile found: default
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:25.274
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:25.431
+!MESSAGE AWS toolkit core plugin initialized after 4562 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:25.435
+!MESSAGE The current accountId is not found in the system. Switching to the default account.
+
+!ENTRY org.eclipse.ui 2 0 2016-04-04 19:06:25.440
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-04 19:06:25.443
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+!SESSION 2016-04-05 09:42:15.628 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 09:42:43.113
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 09:42:48.113
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 09:42:48.362
+!MESSAGE AWS toolkit core plugin initialized after 5250 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 09:42:48.375
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY org.eclipse.ui 2 0 2016-04-05 09:42:48.377
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY org.eclipse.recommenders.rcp 4 18 2016-04-05 11:35:57.657
+!MESSAGE Failed to resolve selection in ‘=AWSAnalyzingTool/src<com.dev.analyzer{AnalyzerDriver.java’ at offset 1,034.
+!STACK 0
+org.eclipse.recommenders.utils.Logs$LogTraceException
+	at org.eclipse.recommenders.utils.Logs$LogTraceException.newTrace(Logs.java:381)
+	at org.eclipse.recommenders.utils.Logs.log(Logs.java:134)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromTypeRootInEditor(JavaElementSelections.java:164)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromEditor(JavaElementSelections.java:119)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromEditor(JavaElementSelections.java:102)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService.handleSelectionInEditor(JavaElementSelectionService.java:108)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService.access$1(JavaElementSelectionService.java:105)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService$1.run(JavaElementSelectionService.java:82)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:178)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:292)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+!SESSION 2016-04-05 15:53:13.581 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 15:53:29.985
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 15:53:31.384
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 15:53:31.492
+!MESSAGE AWS toolkit core plugin initialized after 1509 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-05 15:53:31.519
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY org.eclipse.ui 2 0 2016-04-05 15:53:46.158
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+!SESSION 2016-04-07 08:18:18.532 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:18:34.201
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:18:35.684
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:18:35.789
+!MESSAGE AWS toolkit core plugin initialized after 1590 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:18:35.819
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY com.amazonaws.eclipse.sdk.ui 1 0 2016-04-07 08:18:42.216
+!MESSAGE Downloading the SDK from CloudFront to location /tmp/aws-java-sdk1611337406296723026/sdk.zip
+
+!ENTRY org.eclipse.ui 2 0 2016-04-07 08:18:51.157
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY com.amazonaws.eclipse.sdk.ui 1 0 2016-04-07 08:19:30.225
+!MESSAGE SDK download completes. Location: /tmp/aws-java-sdk1611337406296723026/sdk.zip, File-length: 167371187
+!SESSION 2016-04-07 08:52:43.331 -----------------------------------------------
+eclipse.buildId=4.5.2.M20160212-1500
+java.version=1.7.0_95
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-04-07 08:52:48.223
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:52:57.476
+!MESSAGE Starting the AWS toolkit core plugin...
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:52:58.886
+!MESSAGE Monitoring content of /home/justin/.aws/credentials
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:52:58.966
+!MESSAGE AWS toolkit core plugin initialized after 1498 milliseconds.
+
+!ENTRY com.amazonaws.eclipse.core 1 0 2016-04-07 08:52:58.994
+!MESSAGE Found valid identity id cache us-east-1:8596051d-3703-4cd3-b62c-e82c6030258f
+
+!ENTRY org.eclipse.ui 2 0 2016-04-07 08:53:12.470
+!MESSAGE The 'org.eclipse.ui.startup' extension from 'com.amazonaws.eclipse.elasticbeanstalk' does not provide a 'class' attribute.
+This usage is deprecated and a 'class' attribute should be provided.
+The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2016-04-07 09:03:07.881
+!MESSAGE Exception during event notification
+!STACK 0
+java.lang.IllegalArgumentException: Location must be absolute: EGit
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.checkValidLocation(AbstractRepositoryManager.java:749)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.getRepositoryProperty(AbstractRepositoryManager.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.getSiteString(RepositorySelectionGroup.java:378)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$14.repositoryAdded(RepositorySelectionGroup.java:497)
+	at org.eclipse.equinox.internal.p2.ui.ProvUIProvisioningListener.handleRepositoryEvent(ProvUIProvisioningListener.java:113)
+	at org.eclipse.equinox.internal.p2.ui.ProvUIProvisioningListener.notify(ProvUIProvisioningListener.java:79)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.dispatchEvent(ProvisioningEventBus.java:108)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.dispatchEvent(ProvisioningEventBus.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.ListenerQueue.dispatchEventSynchronous(ListenerQueue.java:148)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.publishEvent(ProvisioningEventBus.java:85)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.signalRepositoryOperationComplete(ProvisioningUI.java:421)
+	at org.eclipse.equinox.internal.p2.ui.ColocatedRepositoryTracker.addRepository(ColocatedRepositoryTracker.java:74)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.addRepository(AddRepositoryDialog.java:142)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.handleOk(AddRepositoryDialog.java:120)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositoryNameAndLocationDialog.okPressed(RepositoryNameAndLocationDialog.java:86)
+	at org.eclipse.jface.dialogs.Dialog.buttonPressed(Dialog.java:466)
+	at org.eclipse.jface.dialogs.Dialog$2.widgetSelected(Dialog.java:619)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.addRepository(RepositorySelectionGroup.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$6.widgetSelected(RepositorySelectionGroup.java:203)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:227)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:203)
+	at org.eclipse.equinox.internal.p2.ui.sdk.InstallNewSoftwareHandler.doExecute(InstallNewSoftwareHandler.java:31)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.doExecuteAndLoad(PreloadingRepositoryHandler.java:121)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.run(PreloadingRepositoryHandler.java:68)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.execute(PreloadingRepositoryHandler.java:66)
+	at org.eclipse.ui.internal.handlers.HandlerProxy.execute(HandlerProxy.java:295)
+	at org.eclipse.ui.internal.handlers.E4HandlerProxy.execute(E4HandlerProxy.java:90)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:56)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invokeUsingClass(InjectorImpl.java:252)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invoke(InjectorImpl.java:234)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.invoke(ContextInjectionFactory.java:132)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceHandler.execute(HandlerServiceHandler.java:152)
+	at org.eclipse.core.commands.Command.executeWithChecks(Command.java:493)
+	at org.eclipse.core.commands.ParameterizedCommand.executeWithChecks(ParameterizedCommand.java:486)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceImpl.executeHandler(HandlerServiceImpl.java:210)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.executeItem(HandledContributionItem.java:799)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.handleWidgetSelection(HandledContributionItem.java:675)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.access$7(HandledContributionItem.java:659)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem$4.handleEvent(HandledContributionItem.java:592)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$4.run(PartRenderingEngine.java:1127)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1018)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:694)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:606)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:139)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:380)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:235)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:669)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:608)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1515)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1488)
+
+!ENTRY org.eclipse.ui 4 0 2016-04-07 09:03:07.925
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.IllegalArgumentException: Location must be absolute: EGit
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.checkValidLocation(AbstractRepositoryManager.java:749)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.addRepository(AbstractRepositoryManager.java:144)
+	at org.eclipse.equinox.internal.p2.ui.ColocatedRepositoryTracker.addRepository(ColocatedRepositoryTracker.java:63)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.addRepository(AddRepositoryDialog.java:142)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.handleOk(AddRepositoryDialog.java:120)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositoryNameAndLocationDialog.okPressed(RepositoryNameAndLocationDialog.java:86)
+	at org.eclipse.jface.dialogs.Dialog.buttonPressed(Dialog.java:466)
+	at org.eclipse.jface.dialogs.Dialog$2.widgetSelected(Dialog.java:619)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.addRepository(RepositorySelectionGroup.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$6.widgetSelected(RepositorySelectionGroup.java:203)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:227)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:203)
+	at org.eclipse.equinox.internal.p2.ui.sdk.InstallNewSoftwareHandler.doExecute(InstallNewSoftwareHandler.java:31)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.doExecuteAndLoad(PreloadingRepositoryHandler.java:121)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.run(PreloadingRepositoryHandler.java:68)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.execute(PreloadingRepositoryHandler.java:66)
+	at org.eclipse.ui.internal.handlers.HandlerProxy.execute(HandlerProxy.java:295)
+	at org.eclipse.ui.internal.handlers.E4HandlerProxy.execute(E4HandlerProxy.java:90)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:56)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invokeUsingClass(InjectorImpl.java:252)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invoke(InjectorImpl.java:234)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.invoke(ContextInjectionFactory.java:132)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceHandler.execute(HandlerServiceHandler.java:152)
+	at org.eclipse.core.commands.Command.executeWithChecks(Command.java:493)
+	at org.eclipse.core.commands.ParameterizedCommand.executeWithChecks(ParameterizedCommand.java:486)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceImpl.executeHandler(HandlerServiceImpl.java:210)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.executeItem(HandledContributionItem.java:799)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.handleWidgetSelection(HandledContributionItem.java:675)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.access$7(HandledContributionItem.java:659)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem$4.handleEvent(HandledContributionItem.java:592)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$4.run(PartRenderingEngine.java:1127)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1018)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:694)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:606)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:139)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:380)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:235)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:669)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:608)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1515)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1488)
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2016-04-07 09:03:10.545
+!MESSAGE Exception during event notification
+!STACK 0
+java.lang.IllegalArgumentException: Location must be absolute: EGit
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.checkValidLocation(AbstractRepositoryManager.java:749)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.getRepositoryProperty(AbstractRepositoryManager.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.getSiteString(RepositorySelectionGroup.java:378)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$14.repositoryAdded(RepositorySelectionGroup.java:497)
+	at org.eclipse.equinox.internal.p2.ui.ProvUIProvisioningListener.handleRepositoryEvent(ProvUIProvisioningListener.java:113)
+	at org.eclipse.equinox.internal.p2.ui.ProvUIProvisioningListener.notify(ProvUIProvisioningListener.java:79)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.dispatchEvent(ProvisioningEventBus.java:108)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.dispatchEvent(ProvisioningEventBus.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.ListenerQueue.dispatchEventSynchronous(ListenerQueue.java:148)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningEventBus.publishEvent(ProvisioningEventBus.java:85)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.signalRepositoryOperationComplete(ProvisioningUI.java:421)
+	at org.eclipse.equinox.internal.p2.ui.ColocatedRepositoryTracker.addRepository(ColocatedRepositoryTracker.java:74)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.addRepository(AddRepositoryDialog.java:142)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.handleOk(AddRepositoryDialog.java:120)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositoryNameAndLocationDialog.okPressed(RepositoryNameAndLocationDialog.java:86)
+	at org.eclipse.jface.dialogs.Dialog.buttonPressed(Dialog.java:466)
+	at org.eclipse.jface.dialogs.Dialog$2.widgetSelected(Dialog.java:619)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.addRepository(RepositorySelectionGroup.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$6.widgetSelected(RepositorySelectionGroup.java:203)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:227)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:203)
+	at org.eclipse.equinox.internal.p2.ui.sdk.InstallNewSoftwareHandler.doExecute(InstallNewSoftwareHandler.java:31)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.doExecuteAndLoad(PreloadingRepositoryHandler.java:121)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.run(PreloadingRepositoryHandler.java:68)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.execute(PreloadingRepositoryHandler.java:66)
+	at org.eclipse.ui.internal.handlers.HandlerProxy.execute(HandlerProxy.java:295)
+	at org.eclipse.ui.internal.handlers.E4HandlerProxy.execute(E4HandlerProxy.java:90)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:56)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invokeUsingClass(InjectorImpl.java:252)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invoke(InjectorImpl.java:234)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.invoke(ContextInjectionFactory.java:132)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceHandler.execute(HandlerServiceHandler.java:152)
+	at org.eclipse.core.commands.Command.executeWithChecks(Command.java:493)
+	at org.eclipse.core.commands.ParameterizedCommand.executeWithChecks(ParameterizedCommand.java:486)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceImpl.executeHandler(HandlerServiceImpl.java:210)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.executeItem(HandledContributionItem.java:799)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.handleWidgetSelection(HandledContributionItem.java:675)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.access$7(HandledContributionItem.java:659)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem$4.handleEvent(HandledContributionItem.java:592)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$4.run(PartRenderingEngine.java:1127)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1018)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:694)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:606)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:139)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:380)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:235)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:669)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:608)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1515)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1488)
+
+!ENTRY org.eclipse.ui 4 0 2016-04-07 09:03:10.556
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.IllegalArgumentException: Location must be absolute: EGit
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.checkValidLocation(AbstractRepositoryManager.java:749)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.addRepository(AbstractRepositoryManager.java:144)
+	at org.eclipse.equinox.internal.p2.ui.ColocatedRepositoryTracker.addRepository(ColocatedRepositoryTracker.java:63)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.addRepository(AddRepositoryDialog.java:142)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog.handleOk(AddRepositoryDialog.java:120)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositoryNameAndLocationDialog.okPressed(RepositoryNameAndLocationDialog.java:86)
+	at org.eclipse.jface.dialogs.Dialog.buttonPressed(Dialog.java:466)
+	at org.eclipse.jface.dialogs.Dialog$2.widgetSelected(Dialog.java:619)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup.addRepository(RepositorySelectionGroup.java:561)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup$6.widgetSelected(RepositorySelectionGroup.java:203)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:248)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:827)
+	at org.eclipse.jface.window.Window.open(Window.java:803)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:227)
+	at org.eclipse.equinox.p2.ui.ProvisioningUI.openInstallWizard(ProvisioningUI.java:203)
+	at org.eclipse.equinox.internal.p2.ui.sdk.InstallNewSoftwareHandler.doExecute(InstallNewSoftwareHandler.java:31)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.doExecuteAndLoad(PreloadingRepositoryHandler.java:121)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.run(PreloadingRepositoryHandler.java:68)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler.execute(PreloadingRepositoryHandler.java:66)
+	at org.eclipse.ui.internal.handlers.HandlerProxy.execute(HandlerProxy.java:295)
+	at org.eclipse.ui.internal.handlers.E4HandlerProxy.execute(E4HandlerProxy.java:90)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:56)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invokeUsingClass(InjectorImpl.java:252)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.invoke(InjectorImpl.java:234)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.invoke(ContextInjectionFactory.java:132)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceHandler.execute(HandlerServiceHandler.java:152)
+	at org.eclipse.core.commands.Command.executeWithChecks(Command.java:493)
+	at org.eclipse.core.commands.ParameterizedCommand.executeWithChecks(ParameterizedCommand.java:486)
+	at org.eclipse.e4.core.commands.internal.HandlerServiceImpl.executeHandler(HandlerServiceImpl.java:210)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.executeItem(HandledContributionItem.java:799)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.handleWidgetSelection(HandledContributionItem.java:675)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem.access$7(HandledContributionItem.java:659)
+	at org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem$4.handleEvent(HandledContributionItem.java:592)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1329)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3819)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3430)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$4.run(PartRenderingEngine.java:1127)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1018)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:694)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:337)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:606)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:139)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:380)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:235)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:669)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:608)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1515)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1488)

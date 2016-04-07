@@ -1,0 +1,42 @@
+package com.dev.analyzer;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CancelSpotInstanceRequestsRequest;
+import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsRequest;
+import com.amazonaws.services.ec2.model.DescribeSpotInstanceRequestsResult;
+import com.amazonaws.services.ec2.model.DescribeSpotPriceHistoryRequest;
+import com.amazonaws.services.ec2.model.LaunchSpecification;
+import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
+import com.amazonaws.services.ec2.model.RequestSpotInstancesResult;
+import com.amazonaws.services.ec2.model.SpotInstanceRequest;
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import com.amazonaws.AmazonWebServiceRequest.*;
+
+public class SpotHistoryAnalyzer {
+	private int maxBid;
+	private double desiredAvailability;
+	private AmazonEC2 ec2;// = new AmazonEC2Client();
+	private AWSCredentials credentials;
+	
+	public SpotHistoryAnalyzer(AWSCredentials cred){
+		credentials = cred;
+	}
+	
+	public SpotHistoryAnalyzer(AWSCredentials cred, int mb, double av){
+		credentials = cred;
+		maxBid = mb;
+		desiredAvailability = av;
+	}
+	
+	public void analyzeHistory(){
+		DescribeSpotPriceHistoryRequest spotHistory = new DescribeSpotPriceHistoryRequest();
+	}
+	
+}

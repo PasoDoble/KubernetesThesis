@@ -1,0 +1,5 @@
+package com.dev.analyzer;
+
+public class AvailabilityCalculator {
+
+}

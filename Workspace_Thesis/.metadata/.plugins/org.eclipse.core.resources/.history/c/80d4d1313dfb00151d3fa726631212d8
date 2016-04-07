@@ -1,0 +1,7 @@
+package com.dev.analyzer;
+
+import com.amazonaws.AmazonWebServiceRequest;
+
+public class SpotHistoryAnalyzer {
+
+}

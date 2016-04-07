@@ -1,0 +1,24 @@
+package com.dev.analyzer;
+
+import com.amazonaws.*;
+import com.amazonaws.AmazonWebServiceRequest;
+
+public class SpotHistoryAnalyzer {
+	private int maxBid;
+	private double desiredAvailability;
+	private AmazonEC2 ec2 = new AmazonEC2Client();
+	
+	public SpotHistoryAnalyzer(){
+		
+	}
+	
+	public SpotHistoryAnalyzer(int mb, double av){
+		maxBid = mb;
+		desiredAvailability = av;
+	}
+	
+	public void analyzeHistory(){
+		DescribeSpotPriceHistoryRequest spotHistory = new DescribeSpotPriceHistoryRequest();
+	}
+	
+}

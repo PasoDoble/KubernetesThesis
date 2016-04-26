@@ -230,7 +230,7 @@ public class SpotHistoryAnalyzer {
 		baseSpeed = 2;
 		baseCores = 1;
 		baseMem = 1;
-		desiredState = 50;
+		desiredState = 100;
 	}
 	
 	//obtains AWS Spot History Data from Amazon and sends it to the proper files for analysis later
@@ -268,7 +268,7 @@ public class SpotHistoryAnalyzer {
 		filterValues.add("Linux/UNIX");
 		filters.add(new Filter("product-description", filterValues));
 		
-		String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryData";
+		String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData";
 		
 		//FileWriter f0 = new FileWriter("RawAWSHistory."+sdf.format(date)+".txt"); //DEFINITELY WORKS LINE
 		String today = sdf.format(date);
@@ -315,9 +315,9 @@ public class SpotHistoryAnalyzer {
 		
 		
 		//Copy old raw data into backup
-		Path oldRaw = Paths.get("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\RawAWSData.txt");
-		Path backupRaw = Paths.get("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\AWSRawBackups\\"+"RawAWSHistory.Replaced"+today+".txt");
-		//long cp = Files.copy(new FileInputStream(new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\RawAWSData")),new FileOutputStream(new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\RawAWSData.+todaysDate"+".txt")));   FAILED ATTEMPT
+		Path oldRaw = Paths.get("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData.txt");
+		Path backupRaw = Paths.get("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\AWSRawBackups\\"+"RawAWSHistory.Replaced"+today+".txt");
+		//long cp = Files.copy(new FileInputStream(new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData")),new FileOutputStream(new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData.+todaysDate"+".txt")));   FAILED ATTEMPT
 		Files.copy(oldRaw, backupRaw, options);
 		
 		//Copy new raw data into common area
@@ -327,7 +327,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createFileDictionary(){
 		this.separatedDataFiles.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryData");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) separatedDataFiles.add(file);
@@ -336,7 +336,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createBaselinedFileDictionary(){
 		this.baselinedDataFiles.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataBaselined");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataBaselined");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.baselinedDataFiles.add(file);
@@ -345,7 +345,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createTalliedBaselinedFileDictionary(){
 		this.talliedBaselinedDF.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.talliedBaselinedDF.add(file);
@@ -354,7 +354,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createTalliedFileDictionary(){
 		this.talliedRawDF.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.talliedRawDF.add(file);
@@ -363,7 +363,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createBaselinedCDFFileDictionary(){
 		this.baselinedCDF.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.baselinedCDF.add(file);
@@ -372,7 +372,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createCDFFileDictionary(){
 		this.cdfFiles.clear();
-		File directory = new File("e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDF");
+		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.cdfFiles.add(file);
@@ -384,7 +384,7 @@ public class SpotHistoryAnalyzer {
 		//String todaysDate = sdf.format(date);
 		
 		//REPLACE WITH DIRECTORY YOU WISH TO USE
-		String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryData";
+		String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData";
 		
 		FileWriter t2n = new FileWriter(new File(directory,"t2.nano.txt"));
 		FileWriter t2m = new FileWriter(new File(directory,"t2.micro.txt"));
@@ -581,7 +581,7 @@ public class SpotHistoryAnalyzer {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
 
-			String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataBaselined";
+			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataBaselined";
 			File baselineFile = new File(directory,fileName);
 			FileWriter baselinedFile = new FileWriter(baselineFile);
 
@@ -615,7 +615,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts";
+			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 
@@ -644,7 +644,7 @@ public class SpotHistoryAnalyzer {
 			talliedFile.close();
 			
 			//CDF Work begins
-			directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDF";
+			directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF";
 			File theCDFDataFile = new File(directory,fileName);
 			FileWriter cdfFile = new FileWriter(theCDFDataFile);
 			//talliedBaselinedDF.add(cdfFile);
@@ -678,7 +678,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 			//talliedBaselinedDF.add(theTallyFile);
@@ -708,7 +708,7 @@ public class SpotHistoryAnalyzer {
 			talliedFile.close();
 			
 			//CDF Work begins
-			directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined";
+			directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined";
 			File theCDFDataFile = new File(directory,fileName);
 			FileWriter cdfFile = new FileWriter(theCDFDataFile);
 			//talliedBaselinedDF.add(cdfFile);
@@ -743,7 +743,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 			//talliedBaselinedDF.add(theTallyFile);
@@ -787,7 +787,7 @@ public class SpotHistoryAnalyzer {
 		//int index = 0;
 		
 		for(File file : this.baselinedCDF){
-			String pdfDir = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String pdfDir = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
 			
 			String fileName = file.getName();
 			int pos = fileName.lastIndexOf(".");
@@ -877,7 +877,7 @@ public class SpotHistoryAnalyzer {
 	}
 	
 	public File writePriorityListFile(InstanceTypeDefinition[] input) throws IOException{
-		String mainDir = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool";
+		String mainDir = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool";
 		String fileName = "PriorityList.txt";
 		File priorityListFile = new File(mainDir, fileName);
 		FileWriter listWriter = new FileWriter(priorityListFile);
@@ -918,7 +918,7 @@ public class SpotHistoryAnalyzer {
 	//*********************************** Math behind obtaining resources and calculating availability ********************************************
 	
 	public void obtainInstances(InstanceTypeDefinition[] input) throws IOException{
-		String mainDir = "e:\\GitHub Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryThesisLevelGraphs";
+		String mainDir = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryThesisLevelGraphs";
 		String fileName = desiredState+"ServersAvailability.txt";
 		File availabilityChart = new File(mainDir, fileName);
 		FileWriter listWriter = new FileWriter(availabilityChart);
@@ -1008,8 +1008,8 @@ public class SpotHistoryAnalyzer {
 		//double equivalentOnDemand = instanceDictionary.get("c4.4xlarge").getOnDemandPrice(); //23 servers
 		double equivalentOnDemand = instanceDictionary.get("c4.8xlarge").getOnDemandPrice()+instanceDictionary.get("m4.10xlarge").getOnDemandPrice();
 		
-		listODWriter.write("100,"+equivalentOnDemand);
-		listODWriter.write("10,"+equivalentOnDemand);
+		listODWriter.write("100,"+equivalentOnDemand+newLine);
+		listODWriter.write("10,"+equivalentOnDemand+newLine);
 		listODWriter.close();
 		
 		System.out.println("On Demand Cost Minimum: $"+equivalentOnDemand);

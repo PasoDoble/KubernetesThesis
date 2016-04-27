@@ -61,6 +61,7 @@ public class SpotHistoryAnalyzer {
 	private AmazonEC2 ec2;// = new AmazonEC2Client();
 	private AWSCredentials credentials;
 	
+	private int dictionarySize;
 	private HashMap<String, InstanceTypeDefinition> instanceDictionary;
 	//private HashMap<String, InstanceTypeDefinition> baselinedInstanceDictionary;
 	private ArrayList<Filter> filters;
@@ -103,6 +104,7 @@ public class SpotHistoryAnalyzer {
 	}
 	
 	public void init(){
+		dictionarySize = 0;
 		instanceDictionary = new HashMap<String, InstanceTypeDefinition>();
 		filters = new ArrayList<Filter>();
 		filterName = "";
@@ -120,6 +122,7 @@ public class SpotHistoryAnalyzer {
 		talliedPrices = new int[300000]; //goes to 000.000 or 00.0000 digits
 		cdfValues = new int[300000];
 		totalTally = 0;
+		
 		
 		ec2 = new AmazonEC2Client(credentials);
 		this.setupDictionary();
@@ -201,6 +204,7 @@ public class SpotHistoryAnalyzer {
 	    	
 	        
 	        instanceDictionary.get(pair.getValue().getLabel()).setBaselineFactor(ratioOfBaselines);
+	        dictionarySize++;
 	        
 	    }
 	}
@@ -230,7 +234,22 @@ public class SpotHistoryAnalyzer {
 		baseSpeed = 2;
 		baseCores = 1;
 		baseMem = 1;
-		desiredState = 100;
+		desiredState = 275;
+	}
+	
+	//Lists all Instance types in order of how many baseline instances they provide
+	public InstanceTypeDefinition[] listInstanceTypesByBaselineAmount(){
+		InstanceTypeDefinition[] instanceArray = new InstanceTypeDefinition[dictionarySize];
+		int instanceCount = 0;
+		Iterator it = instanceDictionary.entrySet().iterator();
+	    while (it.hasNext()) {
+	    	Map.Entry<String, InstanceTypeDefinition> pair = (Map.Entry)it.next();
+	    	instanceArray[instanceCount] = pair.getValue();
+	        instanceCount++;
+	    }
+	    InstanceListMergeSort theSortening = new InstanceListMergeSort();
+	    instanceArray = theSortening.sort(instanceArray, 3);
+	    return instanceArray;
 	}
 	
 	//obtains AWS Spot History Data from Amazon and sends it to the proper files for analysis later
@@ -923,6 +942,18 @@ public class SpotHistoryAnalyzer {
 		File availabilityChart = new File(mainDir, fileName);
 		FileWriter listWriter = new FileWriter(availabilityChart);
 		
+		//for writing On Demand Prices for graphing
+		String nextFileName = desiredState+"ServersAvailabilityOD.txt";
+		File availabilityOnDemandChart = new File(mainDir, nextFileName);
+		FileWriter listODWriter = new FileWriter(availabilityOnDemandChart);
+		int onDemandPercentCount = 0;
+		double equivalentOnDemand = 0.0;
+		
+		InstanceTypeDefinition[] onDemandArray = this.findOnDemandSolution();
+		for(InstanceTypeDefinition inst : onDemandArray){
+			equivalentOnDemand += inst.getOnDemandPrice();
+		}
+		
 		//create false counts for each server type during TESTING ONLY
 		int[] dummyServerCounts = new int[input.length];
 		for(int i = 1; i <= input.length; i++){
@@ -945,6 +976,7 @@ public class SpotHistoryAnalyzer {
 					obtainedInstances.add(input[j]);
 					currentTotalServers++;
 					currentTotalBaselines += instanceDictionary.get(input[j].getLabel()).getBaselineFactor();
+					onDemandPercentCount++;
 					System.out.println("Obtaining "+input[j].getLabel()+" which is "+instanceDictionary.get(input[j].getLabel()).getBaselineFactor()+" baselines");
 					dummyServerCounts[j]--;
 					currentReliability = this.calculateAvailability(obtainedInstances, desiredState, currentTotalBaselines);
@@ -963,8 +995,16 @@ public class SpotHistoryAnalyzer {
 			
 		}
 		
+		//****************************** TEST FOR NEW AVAILABILITY CALC *************************************
+		
+		int desiredServers = currentTotalServers;
+		//currentReliability = this.calculateAvailabilityFromNumServers(obtainedInstances, desiredState, currentTotalBaselines, currentTotalServers, desiredServers);
+		
+		//****************************** END TEST FOR NEW AVAILABILITY CALC *************************************
+		
 		currentReliability = this.calculateAvailability(obtainedInstances, desiredState, currentTotalBaselines);
 		System.out.println("Current Availability: "+currentReliability+"     Desired Availability: "+desiredReliability);
+		
 		
 		while((currentReliability < desiredReliability) && moreSpotsExist){
 			//Obtain next available server
@@ -974,9 +1014,14 @@ public class SpotHistoryAnalyzer {
 					obtainedInstances.add(input[j]);
 					currentTotalServers++;
 					currentTotalBaselines += instanceDictionary.get(input[j].getLabel()).getBaselineFactor();
+					onDemandPercentCount++;
 					System.out.println("Obtaining "+input[j].getLabel()+" which is "+instanceDictionary.get(input[j].getLabel()).getBaselineFactor()+" baselines");
 					dummyServerCounts[j]--;
-					currentReliability = this.calculateAvailability(obtainedInstances, desiredState, currentTotalBaselines);
+					
+					currentReliability = this.calculateAvailability(obtainedInstances, desiredState, currentTotalBaselines);    
+					//********************************************************    TESTING ****************************************
+					//currentReliability = this.calculateAvailabilityFromNumServers(obtainedInstances, desiredState, currentTotalBaselines, currentTotalServers, desiredServers);
+					
 					predictedCostPerHour = this.calculateExpectedCost(obtainedInstances);
 					listWriter.write(currentReliability+","+predictedCostPerHour+newLine);
 					System.out.println("Current Availability: "+currentReliability+"%"+" for a cost of: $"+predictedCostPerHour);
@@ -1001,15 +1046,18 @@ public class SpotHistoryAnalyzer {
 		
 		System.out.println("Expected cost per hour with System: $"+predictedCostPerHour);
 		
-		fileName = desiredState+"ServersAvailabilityOD.txt";
+		/*fileName = desiredState+"ServersAvailabilityOD.txt";
 		File availabilityOnDemandChart = new File(mainDir, fileName);
 		FileWriter listODWriter = new FileWriter(availabilityOnDemandChart);
 		
 		//double equivalentOnDemand = instanceDictionary.get("c4.4xlarge").getOnDemandPrice(); //23 servers
-		double equivalentOnDemand = instanceDictionary.get("c4.8xlarge").getOnDemandPrice()+instanceDictionary.get("m4.10xlarge").getOnDemandPrice();
+		double equivalentOnDemand = instanceDictionary.get("c4.8xlarge").getOnDemandPrice()+instanceDictionary.get("m4.10xlarge").getOnDemandPrice(); //100 servers
 		
 		listODWriter.write("100,"+equivalentOnDemand+newLine);
-		listODWriter.write("10,"+equivalentOnDemand+newLine);
+		listODWriter.write("10,"+equivalentOnDemand+newLine);*/
+		for(int l = 1; l<=onDemandPercentCount; l++){
+			listODWriter.write((100/l)+","+equivalentOnDemand+newLine);
+		}
 		listODWriter.close();
 		
 		System.out.println("On Demand Cost Minimum: $"+equivalentOnDemand);
@@ -1031,12 +1079,73 @@ public class SpotHistoryAnalyzer {
 		return availability*100.0;
 	}
 	
+	public double calculateAvailabilityFromNumServers(ArrayList<InstanceTypeDefinition> instances, int desiredState, int baselineCount, int serverCount, int desiredServers){
+		double summedAvailability = 0.0;
+		for(InstanceTypeDefinition inst : instances){
+			summedAvailability += inst.getAvailability()/100.0;
+		}
+		double approximatedAvailability = summedAvailability/((double)desiredServers);
+		if(approximatedAvailability > 1){
+			approximatedAvailability = 1;
+		}
+		BinomialDistribution distr = new BinomialDistribution(serverCount, approximatedAvailability);
+		double availability = distr.getProbabilityOfSuccess();
+		System.out.println("Current Availability: "+availability*100.0+"%    for new calculation method");
+		return availability*100.0;
+	}
+	
+	
 	public double calculateExpectedCost(ArrayList<InstanceTypeDefinition> instances){
 		double predictedCostPerHour = 0.0;
 		for(InstanceTypeDefinition instance : instances){
 			predictedCostPerHour += (instance.getAverageCost()*instanceDictionary.get(instance.getLabel()).getBaselineFactor());
 		}
 		return predictedCostPerHour;
+	}
+	
+	
+	
+	public InstanceTypeDefinition[] findOnDemandSolution(){
+		ArrayList<InstanceTypeDefinition> tempInstanceList = new ArrayList<InstanceTypeDefinition>();
+		InstanceTypeDefinition[] sortedArray = this.listInstanceTypesByBaselineAmount();
+		//for(int l = 0; l< sortedArray.length; l++){
+		//	System.out.println(sortedArray[l].getLabel()+" has Baselines: "+sortedArray[l].getBaselineFactor());
+		//}
+		int numBaselines = 0;
+		boolean ranOutOfOptions = false;
+		while(numBaselines<desiredState){
+			//System.out.println("Need More Vespeen Gas");   //SHOWED INFINITE LOOP @ 6:22 4/26/2106
+			int serversRequired = desiredState-numBaselines;
+			for(int i = 0; i<sortedArray.length; i++){
+				//System.out.println("In For 1");
+				if(sortedArray[i].getBaselineFactor() <= serversRequired){
+					//System.out.println("In If 1");
+					tempInstanceList.add(sortedArray[i]);
+					numBaselines += sortedArray[i].getBaselineFactor();
+					break;
+				}
+				else if((i+1) >= sortedArray.length){
+					System.out.println("In If 2");
+					for(int j = 0; j<sortedArray.length; j++){
+						//System.out.println("In For 2");
+						if(sortedArray[j].getBaselineFactor() == 1 || j+1 > sortedArray.length || (j+1 <= sortedArray.length && sortedArray[j+1].getBaselineFactor() < 1)){
+							tempInstanceList.add(sortedArray[j]);
+							numBaselines += sortedArray[j].getBaselineFactor();
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		InstanceTypeDefinition[] instanceList = new InstanceTypeDefinition[tempInstanceList.size()];
+		int k = 0;
+		for(InstanceTypeDefinition inst : tempInstanceList){
+			instanceList[k] = inst;
+			k++;
+		}
+		return instanceList;
 	}
 	
 	/*public void obtainInstances(File priorityListFile) throws IOException{

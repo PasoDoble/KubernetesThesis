@@ -71,7 +71,7 @@ public class AnalyzerDriver {
 		}*/
         
         try {
-        	InstanceTypeDefinition[] listOfThings = spotHistory.listBySimpleHybrid(.02);
+        	InstanceTypeDefinition[] listOfThings = spotHistory.listBySimpleHybrid(1);
         	spotHistory.obtainInstances(listOfThings);
         	//for(InstanceTypeDefinition yes : listOfThings){
             //	System.out.println("Driver Working For: "+ yes.getLabel());

@@ -5,7 +5,7 @@ public class InstanceListMergeSort {
 	private InstanceTypeDefinition[] sortingArray;
 	private InstanceTypeDefinition[] merger;
 	private int length;
-	private int sortFactor; //0 = availability, 1 = average price, 2 = simple hybrid sorting
+	private int sortFactor; //0 = availability, 1 = average price, 2 = simple hybrid sorting, 3 = BaselineFactor
 
 	public InstanceListMergeSort(){}
 
@@ -33,6 +33,8 @@ public class InstanceListMergeSort {
 			case 1: mergePartsPPB(lower, mid, upper);
 					break;
 			case 2: mergePartsSimpleHybrid(lower, mid, upper);
+					break;
+			case 3: mergePartsByBaselineFactor(lower, mid, upper);
 					break;
 			}
 		}
@@ -125,6 +127,33 @@ public class InstanceListMergeSort {
 			iHybridFactor = merger[i].getAverageCost()/merger[i].getAvailability();
 			jHybridFactor = merger[j].getAverageCost()/merger[j].getAvailability();
 			if(iHybridFactor < jHybridFactor){
+				sortingArray[k] = merger[i];
+				i++;
+			}
+			else{
+				sortingArray[k] = merger[j];
+				j++;
+			}
+			k++;
+		}
+		while(i <= mid){
+			//System.out.println("k = "+k+"   i = "+i);
+			sortingArray[k] = merger[i];
+			k++;
+			i++;
+		}
+	}
+	
+	public void mergePartsByBaselineFactor(int lower, int mid, int upper){
+		for (int l = lower; l <= upper; l++) {
+			merger[l] = sortingArray[l];
+		}
+		int i = lower;
+		int j = mid+1;
+		int k = lower;
+		while(i <= mid && j <= upper){
+			//System.out.println("k = "+k+"   i = "+i+"   j = "+j);
+			if(merger[i].getBaselineFactor() > merger[j].getBaselineFactor()){
 				sortingArray[k] = merger[i];
 				i++;
 			}

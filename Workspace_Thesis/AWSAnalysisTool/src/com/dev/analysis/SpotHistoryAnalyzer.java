@@ -13,9 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +54,6 @@ import com.amazonaws.AmazonWebServiceRequest.*;
 //Imports for Apache use for Binomial Distribution math
 import org.apache.commons.math3.*;
 import org.apache.commons.math3.distribution.*;
-import org.apache.commons.math3.distribution.BinomialDistribution;
 
 public class SpotHistoryAnalyzer {
 	private final String newLine = System.getProperty("line.separator");
@@ -60,6 +62,7 @@ public class SpotHistoryAnalyzer {
 	private double desiredAvailability;
 	private AmazonEC2 ec2;// = new AmazonEC2Client();
 	private AWSCredentials credentials;
+	private double maxPricePerBaseline;
 	
 	private int dictionarySize;
 	private HashMap<String, InstanceTypeDefinition> instanceDictionary;
@@ -77,11 +80,15 @@ public class SpotHistoryAnalyzer {
 	
 	private SimpleDateFormat sdf;
 	private Date date;
+	private String baseDirectory;
+	private String startTime;
+	private String endTime;
 	
 	private double baseSpeed;
 	private double baseMem;
 	private int baseCores;
 	private int desiredState;
+	private int numberInstanceTypes;
 	
 	private int[] talliedPrices;
 	private int totalTally;
@@ -91,8 +98,9 @@ public class SpotHistoryAnalyzer {
 	//private String[] onDemandLabels;
 	
 	
-	public SpotHistoryAnalyzer(AWSCredentials cred){
+	public SpotHistoryAnalyzer(AWSCredentials cred, double ppb){
 		credentials = cred;
+		maxPricePerBaseline = ppb;
 		this.init();
 	}
 	
@@ -119,10 +127,13 @@ public class SpotHistoryAnalyzer {
 		
 		sdf = new SimpleDateFormat("yyyyMMdd.HHmmss");
 		date = new Date();
+		baseDirectory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\";
 		talliedPrices = new int[300000]; //goes to 000.000 or 00.0000 digits
 		cdfValues = new int[300000];
 		totalTally = 0;
 		
+		startTime ="";
+		endTime = "";
 		
 		ec2 = new AmazonEC2Client(credentials);
 		this.setupDictionary();
@@ -138,42 +149,44 @@ public class SpotHistoryAnalyzer {
 	public void setupDictionary(){
 		//General use
 		//T2 good for burstable things, not stable things. Keep note
-		instanceDictionary.put("t2.nano", new InstanceTypeDefinition("t2.nano", 3.3, 1, .5, 0, .0065));
-		instanceDictionary.put("t2.micro", new InstanceTypeDefinition("t2.micro", 3.3, 1, 1.0, 0, .013));
-		instanceDictionary.put("t2.small", new InstanceTypeDefinition("t2.small", 3.3, 1, 2.0, 0, .026));
-		instanceDictionary.put("t2.medium", new InstanceTypeDefinition("t2.medium", 3.3, 2, 4.0, 0, .052));
-		instanceDictionary.put("t2.large", new InstanceTypeDefinition("t2.large", 3.0, 2, 8.0, 0, .104));
+		instanceDictionary.put("t2.nano", new InstanceTypeDefinition("t2.nano", 3.3, 1, .5, 0, .0065, 0));
+		instanceDictionary.put("t2.micro", new InstanceTypeDefinition("t2.micro", 3.3, 1, 1.0, 0, .013, 1));
+		instanceDictionary.put("t2.small", new InstanceTypeDefinition("t2.small", 3.3, 1, 2.0, 0, .026, 2));
+		instanceDictionary.put("t2.medium", new InstanceTypeDefinition("t2.medium", 3.3, 2, 4.0, 0, .052, 3));
+		instanceDictionary.put("t2.large", new InstanceTypeDefinition("t2.large", 3.0, 2, 8.0, 0, .104, 4));
 		
-		instanceDictionary.put("m4.large", new InstanceTypeDefinition("m4.large", 2.4, 2, 8.0, 1, .12));
-		instanceDictionary.put("m4.xlarge", new InstanceTypeDefinition("m4.xlarge", 2.4, 4, 16.0, 2, .239));
-		instanceDictionary.put("m4.2xlarge", new InstanceTypeDefinition("m4.2xlarge", 2.4, 8, 32.0, 2, .479));
-		instanceDictionary.put("m4.4xlarge", new InstanceTypeDefinition("m4.4xlarge", 2.4, 16, 64.0, 2, .958));
-		instanceDictionary.put("m4.10xlarge", new InstanceTypeDefinition("m4.10xlarge", 2.4, 40, 160.0, 3, 2.394));
+		instanceDictionary.put("m4.large", new InstanceTypeDefinition("m4.large", 2.4, 2, 8.0, 1, .12, 5));
+		instanceDictionary.put("m4.xlarge", new InstanceTypeDefinition("m4.xlarge", 2.4, 4, 16.0, 2, .239, 6));
+		instanceDictionary.put("m4.2xlarge", new InstanceTypeDefinition("m4.2xlarge", 2.4, 8, 32.0, 2, .479, 7));
+		instanceDictionary.put("m4.4xlarge", new InstanceTypeDefinition("m4.4xlarge", 2.4, 16, 64.0, 2, .958, 8));
+		instanceDictionary.put("m4.10xlarge", new InstanceTypeDefinition("m4.10xlarge", 2.4, 40, 160.0, 3, 2.394, 9));
 		
-		instanceDictionary.put("m3.medium", new InstanceTypeDefinition("m3.medium", 2.5, 1, 3.75, 1, .067));
-		instanceDictionary.put("m3.large", new InstanceTypeDefinition("m3.large", 2.5, 2, 7.5, 1, .133));
-		instanceDictionary.put("m3.xlarge", new InstanceTypeDefinition("m3.xlarge", 2.5, 4, 15.0, 2, .266));
-		instanceDictionary.put("m3.2xlarge", new InstanceTypeDefinition("m3.2xlarge", 2.5, 8, 30.0, 2, .532));
+		instanceDictionary.put("m3.medium", new InstanceTypeDefinition("m3.medium", 2.5, 1, 3.75, 1, .067, 10));
+		instanceDictionary.put("m3.large", new InstanceTypeDefinition("m3.large", 2.5, 2, 7.5, 1, .133, 11));
+		instanceDictionary.put("m3.xlarge", new InstanceTypeDefinition("m3.xlarge", 2.5, 4, 15.0, 2, .266, 12));
+		instanceDictionary.put("m3.2xlarge", new InstanceTypeDefinition("m3.2xlarge", 2.5, 8, 30.0, 2, .532, 13));
 		
 		//compute optimized
-		instanceDictionary.put("c4.large", new InstanceTypeDefinition("c4.large", 2.9, 2, 3.75, 1, .105));
-		instanceDictionary.put("c4.xlarge", new InstanceTypeDefinition("c4.xlarge", 2.9, 4, 7.5, 2, .209));
-		instanceDictionary.put("c4.2xlarge", new InstanceTypeDefinition("c4.2xlarge", 2.9, 8, 15.0, 2, .419));
-		instanceDictionary.put("c4.4xlarge", new InstanceTypeDefinition("c4.4xlarge", 2.9, 16, 30.0, 2, .838));
-		instanceDictionary.put("c4.8xlarge", new InstanceTypeDefinition("c4.8xlarge", 2.9, 36, 60.0, 3, 1.675));
+		instanceDictionary.put("c4.large", new InstanceTypeDefinition("c4.large", 2.9, 2, 3.75, 1, .105, 14));
+		instanceDictionary.put("c4.xlarge", new InstanceTypeDefinition("c4.xlarge", 2.9, 4, 7.5, 2, .209, 15));
+		instanceDictionary.put("c4.2xlarge", new InstanceTypeDefinition("c4.2xlarge", 2.9, 8, 15.0, 2, .419, 16));
+		instanceDictionary.put("c4.4xlarge", new InstanceTypeDefinition("c4.4xlarge", 2.9, 16, 30.0, 2, .838, 17));
+		instanceDictionary.put("c4.8xlarge", new InstanceTypeDefinition("c4.8xlarge", 2.9, 36, 60.0, 3, 1.675, 18));
 		
-		instanceDictionary.put("c3.large", new InstanceTypeDefinition("c3.large", 2.8, 2, 3.75, 1, .105));
-		instanceDictionary.put("c3.xlarge", new InstanceTypeDefinition("c3.xlarge", 2.8, 4, 7.5, 1, .21));
-		instanceDictionary.put("c3.2xlarge", new InstanceTypeDefinition("c3.2xlarge", 2.8, 8, 15.0, 2, .42));
-		instanceDictionary.put("c3.4xlarge", new InstanceTypeDefinition("c3.4xlarge", 2.8, 16, 30.0, 2, .84));
-		instanceDictionary.put("c3.8xlarge", new InstanceTypeDefinition("c3.8xlarge", 2.8, 32, 60.0, 3, .168));
+		instanceDictionary.put("c3.large", new InstanceTypeDefinition("c3.large", 2.8, 2, 3.75, 1, .105, 19));
+		instanceDictionary.put("c3.xlarge", new InstanceTypeDefinition("c3.xlarge", 2.8, 4, 7.5, 1, .21, 20));
+		instanceDictionary.put("c3.2xlarge", new InstanceTypeDefinition("c3.2xlarge", 2.8, 8, 15.0, 2, .42, 21));
+		instanceDictionary.put("c3.4xlarge", new InstanceTypeDefinition("c3.4xlarge", 2.8, 16, 30.0, 2, .84, 22));
+		instanceDictionary.put("c3.8xlarge", new InstanceTypeDefinition("c3.8xlarge", 2.8, 32, 60.0, 3, .168, 23));
 		
 		//memory optimized, low cost per GB RAM
-		instanceDictionary.put("r3.large", new InstanceTypeDefinition("r3.large", 2.5, 2, 15.25, 1, .166));
-		instanceDictionary.put("r3.xlarge", new InstanceTypeDefinition("r3.xlarge", 2.5, 4, 30.5, 1, .333));
-		instanceDictionary.put("r3.2xlarge", new InstanceTypeDefinition("r3.2xlarge", 2.5, 8, 61, 2, .665));
-		instanceDictionary.put("r3.4xlarge", new InstanceTypeDefinition("r3.4xlarge", 2.5, 16, 122, 2, 1.33));
-		instanceDictionary.put("r3.8xlarge", new InstanceTypeDefinition("r3.8xlarge", 2.5, 32, 244, 3, 2.66));
+		instanceDictionary.put("r3.large", new InstanceTypeDefinition("r3.large", 2.5, 2, 15.25, 1, .166, 24));
+		instanceDictionary.put("r3.xlarge", new InstanceTypeDefinition("r3.xlarge", 2.5, 4, 30.5, 1, .333, 25));
+		instanceDictionary.put("r3.2xlarge", new InstanceTypeDefinition("r3.2xlarge", 2.5, 8, 61, 2, .665, 26));
+		instanceDictionary.put("r3.4xlarge", new InstanceTypeDefinition("r3.4xlarge", 2.5, 16, 122, 2, 1.33, 27));
+		instanceDictionary.put("r3.8xlarge", new InstanceTypeDefinition("r3.8xlarge", 2.5, 32, 244, 3, 2.66, 28));
+		
+		numberInstanceTypes = 29;
 		
 		//NOT INCLUDING G2, I2, D2 Instances that focus on graphics and storage
 	}
@@ -234,7 +247,7 @@ public class SpotHistoryAnalyzer {
 		baseSpeed = 2;
 		baseCores = 1;
 		baseMem = 1;
-		desiredState = 275;
+		desiredState = 250;
 	}
 	
 	//Lists all Instance types in order of how many baseline instances they provide
@@ -287,7 +300,7 @@ public class SpotHistoryAnalyzer {
 		filterValues.add("Linux/UNIX");
 		filters.add(new Filter("product-description", filterValues));
 		
-		String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData";
+		String directory = baseDirectory+"HistoryData";
 		
 		//FileWriter f0 = new FileWriter("RawAWSHistory."+sdf.format(date)+".txt"); //DEFINITELY WORKS LINE
 		String today = sdf.format(date);
@@ -334,9 +347,9 @@ public class SpotHistoryAnalyzer {
 		
 		
 		//Copy old raw data into backup
-		Path oldRaw = Paths.get("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData.txt");
-		Path backupRaw = Paths.get("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\AWSRawBackups\\"+"RawAWSHistory.Replaced"+today+".txt");
-		//long cp = Files.copy(new FileInputStream(new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData")),new FileOutputStream(new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\RawAWSData.+todaysDate"+".txt")));   FAILED ATTEMPT
+		Path oldRaw = Paths.get(baseDirectory+"RawAWSData.txt");
+		Path backupRaw = Paths.get(baseDirectory+"AWSRawBackups\\"+"RawAWSHistory.Replaced"+today+".txt");
+		//long cp = Files.copy(new FileInputStream(new File(baseDirectory+"RawAWSData")),new FileOutputStream(new File(baseDirectory+"RawAWSData.+todaysDate"+".txt")));   FAILED ATTEMPT
 		Files.copy(oldRaw, backupRaw, options);
 		
 		//Copy new raw data into common area
@@ -346,7 +359,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createFileDictionary(){
 		this.separatedDataFiles.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData");
+		File directory = new File(baseDirectory+"HistoryData");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) separatedDataFiles.add(file);
@@ -355,7 +368,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createBaselinedFileDictionary(){
 		this.baselinedDataFiles.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataBaselined");
+		File directory = new File(baseDirectory+"HistoryDataBaselined");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.baselinedDataFiles.add(file);
@@ -364,7 +377,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createTalliedBaselinedFileDictionary(){
 		this.talliedBaselinedDF.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts");
+		File directory = new File(baseDirectory+"HistoryDataTalliedBaselinedCosts");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.talliedBaselinedDF.add(file);
@@ -373,7 +386,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createTalliedFileDictionary(){
 		this.talliedRawDF.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts");
+		File directory = new File(baseDirectory+"HistoryDataTalliedCosts");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.talliedRawDF.add(file);
@@ -382,7 +395,7 @@ public class SpotHistoryAnalyzer {
 	
 	public void createBaselinedCDFFileDictionary(){
 		this.baselinedCDF.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined");
+		File directory = new File(baseDirectory+"HistoryDataCDFBaselined");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.baselinedCDF.add(file);
@@ -391,11 +404,30 @@ public class SpotHistoryAnalyzer {
 	
 	public void createCDFFileDictionary(){
 		this.cdfFiles.clear();
-		File directory = new File("e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF");
+		File directory = new File(baseDirectory+"HistoryDataCDF");
 		for(final File file : directory.listFiles()){
 			//System.out.println(file.getName());
 			if((file.getName()).endsWith(".txt")) this.cdfFiles.add(file);
 		}
+	}
+	
+	public void createOrderedIDFileList() throws Exception{
+			InstanceTypeDefinition[] instanceArray = new InstanceTypeDefinition[dictionarySize];
+			Iterator it = instanceDictionary.entrySet().iterator();
+
+		    while (it.hasNext()) {
+		    	Map.Entry<String, InstanceTypeDefinition> pair = (Map.Entry)it.next();
+		    	instanceArray[pair.getValue().getID()] = pair.getValue();
+		    }
+		    
+			String fileName = "InstanceOrderedID.txt";
+			File idFile = new File(baseDirectory,fileName);
+			FileWriter IDFile = new FileWriter(idFile);
+			
+			for(InstanceTypeDefinition inst : instanceArray){
+				IDFile.write(inst.getLabel()+newLine);
+			}
+			IDFile.close();
 	}
 	
 	//Separates raw AWS History Data into separate files named with the instance type
@@ -403,7 +435,7 @@ public class SpotHistoryAnalyzer {
 		//String todaysDate = sdf.format(date);
 		
 		//REPLACE WITH DIRECTORY YOU WISH TO USE
-		String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryData";
+		String directory = baseDirectory+"HistoryData";
 		
 		FileWriter t2n = new FileWriter(new File(directory,"t2.nano.txt"));
 		FileWriter t2m = new FileWriter(new File(directory,"t2.micro.txt"));
@@ -436,78 +468,97 @@ public class SpotHistoryAnalyzer {
 		FileWriter r38xl = new FileWriter(new File(directory,"r3.8xlarge.txt"));
 		
 		File rawFile = new File("RawAWSData.txt");
+		//File rawFile = new File(this.baseDirectory,"RawAWSData.txt"); //Just to make certain it stays in the correct directory
 		BufferedReader br = new BufferedReader(new FileReader(rawFile));
 		String line;
 		int count = 0;
 		int bigCount = 0;
+		
+		String firstDate = "";
+		String secondToLastDate = "";
+		String lastDate = "";
+		
 		while((line = br.readLine()) != null){
+			
+			StringTokenizer st = new StringTokenizer(line, ",");
+			
+			String label = st.nextToken();
+			String thisPrice = st.nextToken();
+			String thisDate = st.nextToken();
+			
+			if(count == 0){
+				firstDate = thisDate;
+			}
+			secondToLastDate = lastDate;
+			lastDate = thisDate;
+			
+			String writtenEntry = thisPrice+","+thisDate+newLine;
+			switch (label){
+			case "t2.nano": t2n.write(writtenEntry);
+							break;
+			case "t2.micro": t2n.write(writtenEntry);
+							break;
+			case "t2.small": t2s.write(writtenEntry);
+							break;
+			case "t2.medium": t2me.write(writtenEntry);
+							break;
+			case "t2.large": t2l.write(writtenEntry);
+							break;
+			case "m3.medium": m3m.write(writtenEntry);
+							break;
+			case "m3.large": m3l.write(writtenEntry);
+							break;
+			case "m3.xlarge": m3xl.write(writtenEntry);
+							break;
+			case "m3.2xlarge": m32xl.write(writtenEntry);
+							break;
+			case "m4.large": m4l.write(writtenEntry);
+							break;
+			case "m4.xlarge": m4xl.write(writtenEntry);
+							break;
+			case "m4.2xlarge": m42xl.write(writtenEntry);
+							break;
+			case "m4.4xlarge": m44xl.write(writtenEntry);
+							break;
+			case "m4.10xlarge": m410xl.write(writtenEntry);
+							break;
+			case "c4.large": c4l.write(writtenEntry);
+							break;
+			case "c4.xlarge": c4xl.write(writtenEntry);
+							break;
+			case "c4.2xlarge": c42xl.write(writtenEntry);
+							break;
+			case "c4.4xlarge": c44xl.write(writtenEntry);
+							break;
+			case "c4.8xlarge": c48xl.write(writtenEntry);
+							break;
+			case "c3.large": c3l.write(writtenEntry);
+							break;
+			case "c3.xlarge": c3xl.write(writtenEntry);
+							break;
+			case "c3.2xlarge": c32xl.write(writtenEntry);
+							break;
+			case "c3.4xlarge": c34xl.write(writtenEntry);
+							break;
+			case "c3.8xlarge": c38xl.write(writtenEntry);
+							break;
+			case "r3.large": r3l.write(writtenEntry);
+							break;
+			case "r3.xlarge": r3xl.write(writtenEntry);
+							break;
+			case "r3.2xlarge": r32xl.write(writtenEntry);
+							break;
+			case "r3.4xlarge": r34xl.write(writtenEntry);
+							break;
+			case "r3.8xlarge": r38xl.write(writtenEntry);
+							break;
+
+			}
+			
 			count++;
 			if(count>1000){
 				System.out.println("Lines Processed (x1000): "+bigCount++);
-				count = 0;
-			}
-			StringTokenizer st = new StringTokenizer(line, ",");
-			String label = st.nextToken();
-			switch (label){
-			case "t2.nano": t2n.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "t2.micro": t2n.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "t2.small": t2s.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "t2.medium": t2me.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "t2.large": t2l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m3.medium": m3m.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m3.large": m3l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m3.xlarge": m3xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m3.2xlarge": m32xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m4.large": m4l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m4.xlarge": m4xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m4.2xlarge": m42xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m4.4xlarge": m44xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "m4.10xlarge": m410xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c4.large": c4l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c4.xlarge": c4xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c4.2xlarge": c42xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c4.4xlarge": c44xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c4.8xlarge": c48xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c3.large": c3l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c3.xlarge": c3xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c3.2xlarge": c32xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c3.4xlarge": c34xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "c3.8xlarge": c38xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "r3.large": r3l.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "r3.xlarge": r3xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "r3.2xlarge": r32xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "r3.4xlarge": r34xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-			case "r3.8xlarge": r38xl.write(st.nextToken()+","+st.nextToken()+newLine);
-							break;
-
+				count = 1;
 			}
 		}
 		System.out.println("Raw Data Separation Complete");
@@ -541,6 +592,13 @@ public class SpotHistoryAnalyzer {
 		r34xl.close();
 		r38xl.close();
 		br.close();
+		
+		//Added for finding the start and end date of all files
+		FileWriter beginEnd = new FileWriter(new File(this.baseDirectory,"beginAndEndDates.txt"));
+		beginEnd.write(firstDate+newLine);
+		beginEnd.write(secondToLastDate+newLine);
+		beginEnd.close();
+		
 		this.createFileDictionary();
 		this.considerNullFiles();
 	}
@@ -600,7 +658,7 @@ public class SpotHistoryAnalyzer {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
 
-			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataBaselined";
+			String directory = baseDirectory+"HistoryDataBaselined";
 			File baselineFile = new File(directory,fileName);
 			FileWriter baselinedFile = new FileWriter(baselineFile);
 
@@ -634,7 +692,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedCosts";
+			String directory = baseDirectory+"HistoryDataTalliedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 
@@ -663,7 +721,7 @@ public class SpotHistoryAnalyzer {
 			talliedFile.close();
 			
 			//CDF Work begins
-			directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF";
+			directory = baseDirectory+"HistoryDataCDF";
 			File theCDFDataFile = new File(directory,fileName);
 			FileWriter cdfFile = new FileWriter(theCDFDataFile);
 			//talliedBaselinedDF.add(cdfFile);
@@ -697,7 +755,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String directory = baseDirectory+"HistoryDataTalliedBaselinedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 			//talliedBaselinedDF.add(theTallyFile);
@@ -727,7 +785,7 @@ public class SpotHistoryAnalyzer {
 			talliedFile.close();
 			
 			//CDF Work begins
-			directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined";
+			directory = baseDirectory+"HistoryDataCDFBaselined";
 			File theCDFDataFile = new File(directory,fileName);
 			FileWriter cdfFile = new FileWriter(theCDFDataFile);
 			//talliedBaselinedDF.add(cdfFile);
@@ -762,7 +820,7 @@ public class SpotHistoryAnalyzer {
 			//int pos = fileName.lastIndexOf(".");
 			//String instanceName = fileName.substring(0, pos);
 
-			String directory = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String directory = baseDirectory+"HistoryDataTalliedBaselinedCosts";
 			File theTallyFile = new File(directory,fileName);
 			FileWriter talliedFile = new FileWriter(theTallyFile);
 			//talliedBaselinedDF.add(theTallyFile);
@@ -798,7 +856,7 @@ public class SpotHistoryAnalyzer {
 	//************************************ Calculating best cost option lists ****************************************************
 	
 	
-	public InstanceTypeDefinition[] createAvailabilityList(double maxPPB) throws IOException{   //Maybe return the list of best options, or the cost expected, etc
+	public InstanceTypeDefinition[] createAvailabilityList() throws IOException{   //Maybe return the list of best options, or the cost expected, etc
 		this.createBaselinedCDFFileDictionary();
 		
 		//InstanceTypeDefinition[] listByAvail = new InstanceTypeDefinition[baselinedCDF.size()];
@@ -806,7 +864,7 @@ public class SpotHistoryAnalyzer {
 		//int index = 0;
 		
 		for(File file : this.baselinedCDF){
-			String pdfDir = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataTalliedBaselinedCosts";
+			String pdfDir = baseDirectory+"HistoryDataTalliedBaselinedCosts";
 			
 			String fileName = file.getName();
 			int pos = fileName.lastIndexOf(".");
@@ -823,7 +881,7 @@ public class SpotHistoryAnalyzer {
 				//System.out.println("lineCount: "+lineCount+++" file: "+fileName);
 				StringTokenizer st = new StringTokenizer(line, ",");
 				double baselinedCost = Double.parseDouble(st.nextToken());
-				if(baselinedCost > maxPPB){
+				if(baselinedCost > maxPricePerBaseline){
 					break;
 				}
 				highestCost = baselinedCost;
@@ -865,8 +923,9 @@ public class SpotHistoryAnalyzer {
 		return listByAvail;
 	}
 	
-	public InstanceTypeDefinition[] listByBestAvailability(double maxPPB) throws IOException{
-		InstanceTypeDefinition[] initialList = this.createAvailabilityList(maxPPB);
+	public InstanceTypeDefinition[] listByBestAvailability() throws IOException{
+
+		InstanceTypeDefinition[] initialList = this.createAvailabilityList();
 		InstanceListMergeSort theSorter = new InstanceListMergeSort();
 		InstanceTypeDefinition[] listByAvail = theSorter.sort(initialList, 0);
 		
@@ -875,8 +934,9 @@ public class SpotHistoryAnalyzer {
 		return listByAvail;
 	}
 
-	public InstanceTypeDefinition[] listByMinPPB(double maxPPB) throws IOException{   //Maybe return the list of best options, or the cost expected, etc
-		InstanceTypeDefinition[] initialList = this.createAvailabilityList(maxPPB);
+	public InstanceTypeDefinition[] listByMinPPB() throws IOException{   //Maybe return the list of best options, or the cost expected, etc
+
+		InstanceTypeDefinition[] initialList = this.createAvailabilityList();
 		InstanceListMergeSort theSorter = new InstanceListMergeSort();
 		InstanceTypeDefinition[] listByPrice = theSorter.sort(initialList, 1);
 		
@@ -885,8 +945,9 @@ public class SpotHistoryAnalyzer {
 		return listByPrice;
 	}
 	
-	public InstanceTypeDefinition[] listBySimpleHybrid(double maxPPB) throws IOException{   //Maybe return the list of best options, or the cost expected, etc
-		InstanceTypeDefinition[] initialList = this.createAvailabilityList(maxPPB);
+	public InstanceTypeDefinition[] listBySimpleHybrid() throws IOException{   //Maybe return the list of best options, or the cost expected, etc
+
+		InstanceTypeDefinition[] initialList = this.createAvailabilityList();
 		InstanceListMergeSort theSorter = new InstanceListMergeSort();
 		InstanceTypeDefinition[] listByHybrid = theSorter.sort(initialList, 2);
 		
@@ -937,7 +998,7 @@ public class SpotHistoryAnalyzer {
 	//*********************************** Math behind obtaining resources and calculating availability ********************************************
 	
 	public void obtainInstances(InstanceTypeDefinition[] input) throws IOException{
-		String mainDir = "e:\\Graduate School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryThesisLevelGraphs";
+		String mainDir = baseDirectory+"HistoryThesisLevelGraphs";
 		String fileName = desiredState+"ServersAvailability.txt";
 		File availabilityChart = new File(mainDir, fileName);
 		FileWriter listWriter = new FileWriter(availabilityChart);
@@ -1046,30 +1107,36 @@ public class SpotHistoryAnalyzer {
 		
 		System.out.println("Expected cost per hour with System: $"+predictedCostPerHour);
 		
-		/*fileName = desiredState+"ServersAvailabilityOD.txt";
-		File availabilityOnDemandChart = new File(mainDir, fileName);
-		FileWriter listODWriter = new FileWriter(availabilityOnDemandChart);
-		
-		//double equivalentOnDemand = instanceDictionary.get("c4.4xlarge").getOnDemandPrice(); //23 servers
-		double equivalentOnDemand = instanceDictionary.get("c4.8xlarge").getOnDemandPrice()+instanceDictionary.get("m4.10xlarge").getOnDemandPrice(); //100 servers
-		
-		listODWriter.write("100,"+equivalentOnDemand+newLine);
-		listODWriter.write("10,"+equivalentOnDemand+newLine);*/
 		for(int l = 1; l<=onDemandPercentCount; l++){
 			listODWriter.write((100/l)+","+equivalentOnDemand+newLine);
 		}
 		listODWriter.close();
 		
+		
+		//------------------------- Generate the availability we can guarantee for higher server counts ------------------------------
+		
+		String newDir = baseDirectory+"HistoryThesisLevelGraphs";
+		String newFileName = desiredState+"ServersAvailabilityExcess.txt";
+		File excessServerChart = new File(mainDir, newFileName);
+		FileWriter excessListWriter = new FileWriter(excessServerChart);
+		
+		int[] numBaselinesByPercent = this.calculateAvailabilityPerBaselineNumber(obtainedInstances, currentTotalBaselines);
+		for(int i = 1; i<100; i++){
+			excessListWriter.write(i+".0,"+numBaselinesByPercent[i]+newLine);
+		}
+		excessListWriter.close();
+		
 		System.out.println("On Demand Cost Minimum: $"+equivalentOnDemand);
 		
 	}
 	
-	public double calculateAvailability(ArrayList<InstanceTypeDefinition> instances, int desiredState, int baselineCount){
+	public double calculateAvailability(ArrayList<InstanceTypeDefinition> instances, int newDesiredState, int baselineCount){
 		double summedAvailability = 0.0;
 		for(InstanceTypeDefinition inst : instances){
 			summedAvailability += ((inst.getAvailability()/100.0)*((double)instanceDictionary.get(inst.getLabel()).getBaselineFactor()));
 		}
-		double approximatedAvailability = summedAvailability/((double)desiredState);
+		double approximatedAvailability = summedAvailability/((double)newDesiredState);
+		//System.out.println("Current ApproxAvailability: "+approximatedAvailability*100.0+"%    ");
 		if(approximatedAvailability > 1){
 			approximatedAvailability = 1;
 		}
@@ -1077,6 +1144,24 @@ public class SpotHistoryAnalyzer {
 		double availability = distr.getProbabilityOfSuccess();
 		//System.out.println("Current Availability: "+availability*100.0+"%");
 		return availability*100.0;
+	}
+	
+	//Creates a list based on the number of baselines we have obtained to tell us the number of baselines we have available at given percentages
+	public int[] calculateAvailabilityPerBaselineNumber(ArrayList<InstanceTypeDefinition> instances, int baselineCount){
+		int[] numBaselinesByPercent = new int[100];
+		for(int i = 1; i<100; i++){
+			//System.out.println("Iteration in baseline availbility calculator: "+i);
+			double thisPercent = (double)i;
+			double currentAvail = 0.0;
+			int dState = baselineCount;
+			while(currentAvail <= thisPercent){
+				currentAvail = this.calculateAvailability(instances, dState, baselineCount);
+				dState--;
+			}
+			numBaselinesByPercent[i] = dState;
+		}
+		
+		return numBaselinesByPercent;
 	}
 	
 	public double calculateAvailabilityFromNumServers(ArrayList<InstanceTypeDefinition> instances, int desiredState, int baselineCount, int serverCount, int desiredServers){
@@ -1148,22 +1233,159 @@ public class SpotHistoryAnalyzer {
 		return instanceList;
 	}
 	
-	/*public void obtainInstances(File priorityListFile) throws IOException{
-		Stack<String> instanceTypes = new Stack<String>();
+	
+	//************************************************ Testing for Instance Type Independence ***********************************************
+	
+	//Create the interdependence map of all instance types
+	public double[][] determineInstanceIndependence(boolean[][] allInstancesMap) throws Exception{
+		String newDir = baseDirectory+"InterAvailbilities\\BidLevel_$"+maxPricePerBaseline;
+		File bidLevelDirectory = new File(newDir);
 		
-		BufferedReader br = new BufferedReader(new FileReader(priorityListFile));
+		bidLevelDirectory.mkdirs();
+		
+		File instanceMapping = new File(newDir, "PercentageDependanceMapping.txt");
+		FileWriter mapWriter = new FileWriter(instanceMapping);
+		
+		double[][] interAvailabilityMap = new double[numberInstanceTypes][numberInstanceTypes];
+		int[][] interAvailabilityCounter = new int[numberInstanceTypes][numberInstanceTypes];
+		int numberTimeIndices = allInstancesMap[0].length;
+		
+		double[] instancePercentTimeAvailable = new double[numberInstanceTypes];
+		int[] instancePercentTimeCount = new int[numberInstanceTypes];
+		
+		for(int instanceIDMain = 0; instanceIDMain < numberInstanceTypes; instanceIDMain++){
+			
+			// EFFICIENT SOLUTION, NOT PERFECT FOR FILE STORAGE    for(int instanceIDSub = instanceIDMain+1; instanceIDSub < numberInstanceTypes; instanceIDSub++){
+			for(int instanceIDSub = 0; instanceIDSub < numberInstanceTypes; instanceIDSub++){
+				
+				for(int timeIndex = 0; timeIndex < numberTimeIndices; timeIndex++){
+					if(allInstancesMap[instanceIDMain][timeIndex] == allInstancesMap[instanceIDSub][timeIndex]){  //Only counting trues: if(allInstancesMap[instanceIDMain][timeIndex] && allInstancesMap[instanceIDSub][timeIndex]){
+						interAvailabilityCounter[instanceIDMain][instanceIDSub]++;
+					}
+					if(allInstancesMap[instanceIDMain][timeIndex]) instancePercentTimeCount[instanceIDMain]++;
+				}
+				interAvailabilityMap[instanceIDMain][instanceIDSub] = ((double)interAvailabilityCounter[instanceIDMain][instanceIDSub])/((double)allInstancesMap[instanceIDMain].length);
+				mapWriter.write(interAvailabilityMap[instanceIDMain][instanceIDSub]*100.0+",");  //multiply 100 for percentage
+				
+			}
+			mapWriter.write(newLine);
+			System.out.println("All availabilities done for ID: "+instanceIDMain);
+			
+			// IN CASE YOU EVER CARE WHAT PERCENT OF TIME YOU HAVE THIS INSTANCE AVAILABLE
+			instancePercentTimeAvailable[instanceIDMain] = ((double)instancePercentTimeCount[instanceIDMain])/((double)allInstancesMap[instanceIDMain].length);
+		}
+		mapWriter.close();
+		return interAvailabilityMap;
+	}
+	
+	//Create the array and file for the dependence of one file on all other files
+	public double[] determineSingleInstanceDependence(){
+		return null;
+	}
+	
+	//Maps the yes available/no available times for an instance type
+	public boolean[] createInstanceTimeMap(File file, File directory, long timeFrameMinutes, long theEndTimeMillis) throws Exception{
+		int numberIndices = ((int)timeFrameMinutes/10) + 1;
+		boolean[] instanceTimeMap = new boolean[numberIndices];
+		
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line;
+		
+		String baselinedFileName = file.getName();
+		FileWriter interAvailabilityWriter = new FileWriter(new File(directory, baselinedFileName)); //Double check the file.getName is what I want to use here
+		
 		while((line = br.readLine()) != null){
-			//System.out.println("lineCount: "+lineCount+++" file: "+fileName);
 			StringTokenizer st = new StringTokenizer(line, ",");
-			String instanceTypeName = st.nextToken();
+			
+			String thisPrice = st.nextToken();
+			String thisDate = st.nextToken();
+			double thePrice = Double.parseDouble(thisPrice);
+			
+			if(thisDate.equals("FOREVER")) break; //How I dealt with instances that couldn't be used: set their price to 0 forever
+			
+			
+			if(thePrice <= maxPricePerBaseline){
+				DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+				Date lineDate = (Date)formatter.parse(thisDate);
+				long lineTimeMillis = lineDate.getTime();
+				long relativeMillis = lineTimeMillis - theEndTimeMillis;
+
+				//System.out.println("Line Millis: "+lineTimeMillis);
+
+				int indexOfBoolean = (int)(relativeMillis/600000); //60,000 = conversion of milliseconds to minutes, 10 for conversion of indices of 10 minute intervals
+				//System.out.println(indexOfBoolean);
+				instanceTimeMap[indexOfBoolean] = true;
+			}
+
+		}
+		
+		br.close();
+		System.out.println("Doing availability mapping for: "+baselinedFileName);
+		for(int i = 0; i<numberIndices; i++){
+			interAvailabilityWriter.write(i+","+instanceTimeMap[i]+newLine);
+		}
+		interAvailabilityWriter.close();
+		return instanceTimeMap;
+	}
+	
+	//Calls the above for every file
+	//Array format 5/3/16: Has an index for every 10 minute interval in the 90 day history
+	//Assumptions 5/3/16: The usual spot instance is not lost from any non-bid source in less than 10 minutes
+	public boolean[][] createAllInstancesTimeMap() throws Exception{//int timeFrame, int startTime, int endTime) throws IOException{
+		this.createBaselinedFileDictionary();
+		
+		String newDir = baseDirectory+"TimeMapping\\BidLevel_$"+maxPricePerBaseline;
+		File bidLevelDirectory = new File(newDir);
+		
+		bidLevelDirectory.mkdirs();
+		
+		File beginEnd = new File(this.baseDirectory,"beginAndEndDates.txt");
+		BufferedReader br = new BufferedReader(new FileReader(beginEnd));
+		
+		startTime = br.readLine();
+		endTime = br.readLine();
+		br.close();
+		
+		//System.out.println(startTime);
+		//System.out.println(endTime);
+		
+		DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+		Date startDate = (Date)formatter.parse(startTime);
+		Date endDate = (Date)formatter.parse(endTime);
+		
+		//System.out.println(startDate);
+		//System.out.println(endDate);
+		
+		long startTimeMillis = startDate.getTime();
+		long endTimeMillis = endDate.getTime();
+		
+		System.out.println("Millis End: "+endTimeMillis);
+		//System.out.println(startTimeMillis);
+		
+		long relativeStartMillis = startTimeMillis - endTimeMillis;
+		System.out.println(relativeStartMillis);
+		
+		long relativeStartMinutes = relativeStartMillis/60000;
+		System.out.println(relativeStartMinutes);
+		
+		int numberIndices = ((int)relativeStartMinutes/10) + 1;
+		boolean[][] InstanceTimeMap = new boolean[numberInstanceTypes][numberIndices];
+		
+		for(File baselinedFile : baselinedDataFiles){
+			String baselinedFileName = baselinedFile.getName();
+			int pos = baselinedFileName.lastIndexOf(".");
+			String instanceType = baselinedFileName.substring(0, pos);
+			
+			int instanceID = instanceDictionary.get(instanceType).getID();
+			
+			InstanceTimeMap[instanceID] = createInstanceTimeMap(baselinedFile, bidLevelDirectory, relativeStartMinutes, endTimeMillis);
+			
+			
 			
 		}
 		
-		
-		br.close();
-	}*/
-	
+		return InstanceTimeMap;
+	}
 	
 	
 }

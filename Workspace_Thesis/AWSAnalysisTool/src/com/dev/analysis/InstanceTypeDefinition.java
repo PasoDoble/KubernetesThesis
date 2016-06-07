@@ -3,6 +3,7 @@ package com.dev.analysis;
 public class InstanceTypeDefinition {
 	
 	public String label;
+	public int instanceID;
 	public String availabilityZone;
 	public double speed; //in GHz
 	public int cores;
@@ -32,13 +33,14 @@ public class InstanceTypeDefinition {
 		harddrive = h;
 	}*/
 	
-	public InstanceTypeDefinition(String l, double s, int c, double r, int n, double odc){
+	public InstanceTypeDefinition(String l, double s, int c, double r, int n, double odc, int initID){
 		label = l;
 		speed = s;
 		cores = c;
 		ram = r;
 		networking = n;
 		onDemandPrice = odc;
+		instanceID = initID;
 	}
 	
 	public InstanceTypeDefinition(String l, double h, double avg, double a){
@@ -106,6 +108,14 @@ public class InstanceTypeDefinition {
 	
 	public void setBaselineFactor(int newbase){
 		this.baselineFactor = newbase;
+	}
+	
+	public int getID(){
+		return instanceID;
+	}
+	
+	public void setID(int newID){
+		instanceID = newID;
 	}
 	
 }

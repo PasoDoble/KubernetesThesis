@@ -25,64 +25,31 @@ public class AnalyzerDriver {
                     e);
         }
         
-        SpotHistoryAnalyzer spotHistory = new SpotHistoryAnalyzer(credentials);
-        /*try {
-			spotHistory.analyzeHistory();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        /*try {
-			spotHistory.separateRawData();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        //spotHistory.createFileDictionary();
-        
-        /*try {
-			spotHistory.calculatePricePerBaseline();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        /*try {
-			spotHistory.tallyingTheAbsoluteCosts();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        /*try {
-			spotHistory.tallyingTheBaselinedCosts();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        /*try {
-			spotHistory.createAvailabilityList(.01);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
+        SpotHistoryAnalyzer spotHistory = new SpotHistoryAnalyzer(credentials, .02);
         try {
-        	InstanceTypeDefinition[] listOfThings = spotHistory.listBySimpleHybrid(1);
-        	spotHistory.obtainInstances(listOfThings);
+			//spotHistory.analyzeHistory();
+        	//spotHistory.separateRawData();
+        	//spotHistory.calculatePricePerBaseline();
+        	//spotHistory.tallyingTheAbsoluteCosts();
+        	//spotHistory.tallyingTheBaselinedCosts();
+        	//spotHistory.createAvailabilityList(.01);
+        	//InstanceTypeDefinition[] listOfThings = spotHistory.listBySimpleHybrid();
+        	//spotHistory.obtainInstances(listOfThings);
+        	boolean[][] timeMap = spotHistory.createAllInstancesTimeMap();
+        	double[][] interAvailabilityMap = spotHistory.determineInstanceIndependence(timeMap);
+        	//spotHistory.createOrderedIDFileList();
         	//for(InstanceTypeDefinition yes : listOfThings){
             //	System.out.println("Driver Working For: "+ yes.getLabel());
             //}
-		} catch (IOException e) {
+        	
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
         
+        //spotHistory.createFileDictionary();
         
-        
+
 	}
 }

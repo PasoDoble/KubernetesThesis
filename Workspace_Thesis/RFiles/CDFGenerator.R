@@ -2,7 +2,7 @@
 
 #File format: price,tally
 
-files <- list.files(path="e:\\GitHub\ Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined\\", pattern="*.txt", full.names=T, recursive=FALSE)
+files <- list.files(path="e:\\Graduate\ School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined\\", pattern="*.txt", full.names=T, recursive=FALSE)
 for(i in 1:length(files)){
   #file <- read.table(files[i],header=TRUE, sep=";", stringsAsFactors=FALSE)
   file <- read.table(files[i], header=F, sep=",", col.names=c("price", "percentage"))
@@ -11,7 +11,7 @@ for(i in 1:length(files)){
   #print(filename)
   instancetype <- substr(filename,1,nchar(filename)-4)
   print(instancetype)
-  dir = "e:\\GitHub\ Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined"
+  dir = "e:\\Graduate\ School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDFBaselined"
   
   newsubfile <- paste(dir,instancetype,sep="\\")
  # print(newsubfile)
@@ -38,7 +38,7 @@ for(i in 1:length(files)){
 }
 
 #For absolute CDFs
-files <- list.files(path="e:\\GitHub\ Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDF\\", pattern="*.txt", full.names=T, recursive=FALSE)
+files <- list.files(path="e:\\Graduate\ School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF\\", pattern="*.txt", full.names=T, recursive=FALSE)
 for(i in 1:length(files)){
   #file <- read.table(files[i],header=TRUE, sep=";", stringsAsFactors=FALSE)
   file <- read.table(files[i], header=F, sep=",", col.names=c("price", "percentage"))
@@ -47,7 +47,7 @@ for(i in 1:length(files)){
   #print(filename)
   instancetype <- substr(filename,1,nchar(filename)-4)
   print(instancetype)
-  dir = "e:\\GitHub\ Repositories\\Thesis-Repository\\workspace\\AWSAnalysisTool\\HistoryDataCDF"
+  dir = "e:\\Graduate\ School\\Thesis\\workspace\\AWSAnalysisTool\\HistoryDataCDF"
   
   newsubfile <- paste(dir,instancetype,sep="\\")
   # print(newsubfile)

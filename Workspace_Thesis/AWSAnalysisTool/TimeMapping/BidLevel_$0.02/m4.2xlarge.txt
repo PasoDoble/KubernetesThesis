@@ -303,7 +303,7 @@
 302,true
 303,true
 304,false
-305,false
+305,true
 306,true
 307,true
 308,true
@@ -751,7 +751,7 @@
 750,true
 751,true
 752,true
-753,true
+753,false
 754,true
 755,false
 756,true
@@ -898,7 +898,7 @@
 897,false
 898,true
 899,true
-900,true
+900,false
 901,true
 902,true
 903,true
@@ -1029,7 +1029,7 @@
 1028,true
 1029,true
 1030,false
-1031,false
+1031,true
 1032,true
 1033,true
 1034,true
@@ -1042,7 +1042,7 @@
 1041,true
 1042,true
 1043,true
-1044,true
+1044,false
 1045,true
 1046,false
 1047,true
@@ -1651,7 +1651,7 @@
 1650,true
 1651,true
 1652,true
-1653,false
+1653,true
 1654,true
 1655,true
 1656,true
@@ -1799,7 +1799,7 @@
 1798,false
 1799,true
 1800,true
-1801,true
+1801,false
 1802,true
 1803,false
 1804,true
@@ -1939,7 +1939,7 @@
 1938,true
 1939,true
 1940,true
-1941,true
+1941,false
 1942,true
 1943,false
 1944,true
@@ -2480,7 +2480,7 @@
 2479,true
 2480,true
 2481,true
-2482,false
+2482,true
 2483,true
 2484,true
 2485,true
@@ -2752,14 +2752,14 @@
 2751,false
 2752,false
 2753,true
-2754,true
+2754,false
 2755,true
 2756,true
 2757,true
 2758,true
 2759,true
 2760,true
-2761,true
+2761,false
 2762,false
 2763,true
 2764,true
@@ -3015,7 +3015,7 @@
 3014,true
 3015,true
 3016,true
-3017,false
+3017,true
 3018,true
 3019,true
 3020,true
@@ -3336,7 +3336,7 @@
 3335,false
 3336,false
 3337,true
-3338,false
+3338,true
 3339,true
 3340,true
 3341,true
@@ -3809,7 +3809,7 @@
 3808,true
 3809,true
 3810,true
-3811,false
+3811,true
 3812,true
 3813,true
 3814,true
@@ -4279,7 +4279,7 @@
 4278,true
 4279,false
 4280,false
-4281,false
+4281,true
 4282,true
 4283,true
 4284,false
@@ -4663,7 +4663,7 @@
 4662,false
 4663,false
 4664,false
-4665,false
+4665,true
 4666,true
 4667,false
 4668,true
@@ -4713,7 +4713,7 @@
 4712,false
 4713,false
 4714,true
-4715,true
+4715,false
 4716,false
 4717,false
 4718,false
@@ -4770,7 +4770,7 @@
 4769,true
 4770,true
 4771,true
-4772,false
+4772,true
 4773,true
 4774,true
 4775,true
@@ -5533,7 +5533,7 @@
 5532,true
 5533,true
 5534,true
-5535,false
+5535,true
 5536,true
 5537,true
 5538,true
@@ -5865,7 +5865,7 @@
 5864,true
 5865,true
 5866,true
-5867,true
+5867,false
 5868,true
 5869,true
 5870,true
@@ -6532,7 +6532,7 @@
 6531,true
 6532,true
 6533,true
-6534,false
+6534,true
 6535,true
 6536,true
 6537,true
@@ -6704,7 +6704,7 @@
 6703,true
 6704,true
 6705,true
-6706,true
+6706,false
 6707,true
 6708,true
 6709,true
@@ -6832,7 +6832,7 @@
 6831,true
 6832,true
 6833,true
-6834,false
+6834,true
 6835,true
 6836,true
 6837,true
@@ -6975,7 +6975,7 @@
 6974,true
 6975,true
 6976,true
-6977,false
+6977,true
 6978,true
 6979,true
 6980,true

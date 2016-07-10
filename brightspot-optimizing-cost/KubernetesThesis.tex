@@ -223,6 +223,31 @@ When all history analysis and cost predictions are complete, we will then have t
 
 
 
+\chapter{Related Works}
+
+There were many research studies and papers which contributed to the design of BrightSpot, as well as some which supported the design ideas which were already being implemented.\par
+
+The idea to use the spot market as a price reducing method was one of the initial drivers of BrightSpot. However, before beginning it was pivotal to show that this price reduction was in fact possible by using the spot market. Fortunately, a cloud scheduler was created to prove exactly this \cite{CuttingCostSpot}. This paper proposed that by utilizing the cloud intelligently, there were savings available to many users if they used the spot market. It went on to show that this was the case by creating a cloud scheduler, which obtained spots to maintain an always available web service \cite{CuttingCostSpot}. The resulting algorithm was dependent on some key factors, such as bidding the cloud at the right moments, with the optimal bid while also recognizing times were present where On-Demand servers would be better options and obtaining them. Ultimately, their hybrid solution of intelligently choosing spot or On-Demand instances for the correct cases produced a high availability, low cost system \cite{CuttingCostSpot}. However, BrightSpot uses this knowledge but takes a different approach in some ways. Most importantly, the cloud scheduler focused on the impacts of the need to transition from server to server when spots are lost, whereas BrightSpot maintains excess spot instances to avoid lengthy transition times and utilizes this excess while it is not needed.\par
+
+The BrightSpot design will need to be based on distributing the workload to many servers in as balanced a way as possible, so that each available server instance is under approximately the same amount of pressure until more are obtained or destroyed. This required the use of a Replicated State Machine Approach \cite{StateMachineApproach}. There are two major system designs to account for fault tolerance, the state machine approach and the primary-backup protocol. The primary-backup protocol is a system design wherein one server is currently acting as the active server, accepting the entirety of the load directed to a web service and performing all of the work without any assistance from the idle backup server \cite{PrimaryBackupProtocol}, The primary-backup strategy was easily seen to not be applicable to BrightSpot, as it requires a very small number of substantially large server instances to be maintained reliably, which would heavily limit the availability of spot instances, as there would be very few instance types (if any) large enough for a user's desired system. On the other hand, the state machine approach creates many smaller, identical servers which are all active for as long as they are being held, and the load of user requests to such a system is distributed to them evenly \cite{StateMachineApproach}. Given our ability to use Kubernetes to manage many small server instances easily, and the much higher availability of smaller instance types in the spot markets, as well as spot instances that can be containerized with Kubernetes, the state machine approach was an easy decision.\par
+
+
+\begin{figure}
+    	\includegraphics[scale=0.25]{Netflix_Spot_Market_Usage}
+        \caption{Netflix Time to Complete Encoding}\label{fig:netflix}
+\end{figure}
+
+As for our design to utilize the excess server space, we can also consider Netflix's approach. Netflix utilizes EC2 to provide user's their very well known web service which streams video to user's homes. However, they have to design their system to meet demands which fluctuate throughout the day and can sometimes be unpredictable. This means that they end up having a large amount of excess space not being utilized. Just like in the case of BrightSpot, the use of this server space would essentially be free, and this led to Netflix creating its own internal spot market \cite{netflixSpot}. By internal spot market, they are referring to the fact that user's streaming gets priority, but they are able to utilize this space in the mean time for other purposes. One such purpose is the need to encode videos of one format into many different formats to be able to stream to a wide array of different user device types. \ref{fig:netflix} shows the result of implementing this system. They began with thousands of queued encoding jobs that were expected to take days, but by utilizing the space that just happened to be available when not utilized by streaming services, they were able to accomplish all tasks in 18 hours.\par
+
+This is directly applicable to the BrightSpot design. We will similarly be designing a system with excess capacity, with the difference being that Netflix maintains excess to deal with spikes in usage and we are using it to account for loss of servers. This excess capacity can be used in an identical way, to accomplish tasks that must be done but which have no needed reliability to be on at any given time.\par
+
+
+
+
+
+%% End of Related Works
+
+
 \chapter{BrightSpot Design}
 
 \section{Spot History Analyzer}
@@ -420,11 +445,11 @@ A series of testing was completed using numerous bid levels (at a per baseline p
 \begin{figure}
 	\begin{center}
     	\includegraphics{CorrelationHeatMap}
-        \caption{Correlation Between Instance Types}\label{fig:corr}
+        \caption{Correlation between different EC2 instance types on the spot market. Darker colors represent higher correlation and for our purposes the more strongly negative correlation is, the better. This is the correlation of when different instance types are available at a given bid level. This correlation represents a bid of \$0.02 per baseline instance, which provides >95\% availability from most AWS spot instance types.}\label{fig:corr}
 	\end{center}
 \end{figure}
 
-\ref{fig:corr} shows the correlation of each spot instance type with every other spot instance type in the form of a heatmap. As mentioned previously, the closer the value is to zero, the less correlated two server instance types are, and the more negatively correlated they are, the more useful they are for our purposes. In the graph that has been generated, higher positive correlation is shown in darker shades, where black means 100\% positive correlation. Additionally, higher negative correlation is shown in lighter colors, meaning 100\% negative corrleation would be shown in white. This leaves the middle as shades of gray, with the most neutral shades of gray, those closest to the middle between black and white, represent the least total correlation.\par
+\ref{fig:corr} shows the correlation of each spot instance type with every other spot instance type in the form of a heatmap. As mentioned previously, the closer the value is to zero, the less correlated two server instance types are, and the more negatively correlated they are, the more useful they are for our purposes. In the graph that has been generated, higher positive correlation is shown in darker shades, where black means 100\% positive correlation. Additionally, higher negative correlation is shown in lighter colors, meaning 100\% negative correlation would be shown in white. This leaves the middle as shades of gray, with the most neutral shades of gray, those closest to the middle between black and white, represent the least total correlation.\par
 
 Before analyzing this data, please note that all data for the t2 instances was empty, as they were too small for the experiments run, and thus their shades should be ignored. Other than this, we can see very clear and very useful trends. The most obvious observation is that the cells representing how correlated an instance is with itself is always black, which should be expected since they are the same data sets. A slightly more subtle trend is that patches of the graph representing "families" of instances, that is to say all instances with the same prefix and thus similar qualities, tend to form patches of the graph that are darker in shade. This is indicative of the fact that there is higher than normal correlation between these families, in general, than there is between instances of two separate families.\par
 
@@ -436,20 +461,24 @@ Currently, this implication has led to the decision that factoring in correlatio
 
 \begin{figure}
 	\begin{minipage}{0.49\textwidth}
-    	\frame{\includegraphics[width=\linewidth]{125ServersAvailability}}
-        \caption{125 Servers}\label{Fig:125servercost}
+    	\frame{\includegraphics[width=\linewidth]{275ServersPricing}}
+        %\caption{The price to obtain 275 baseline instances using BrightSpot is displayed in red. In blue is the price to obtain the same servers using On-Demand instances. BrightSpot shows a high theoretical benefit to users on the order of 66\% price reduction.}
+        \label{Fig:275servercost}
     \end{minipage}
     \begin{minipage}{0.49\textwidth}
-    	\frame{\includegraphics[width=\linewidth]{325ServersAvailability}}
-        \caption{325 Servers}\label{Fig:325servercost}
+    	\frame{\includegraphics[width=\linewidth]{585ServersPricing}}
+        %\caption{The price to obtain 585 baseline instances using BrightSpot is displayed in red. In blue is the price to obtain the same servers using On-Demand instances. BrightSpot shows a high theoretical benefit to users on the order of 60\% price reduction.}
+        \label{Fig:585servercost}
     \end{minipage}
+    \caption{The price to obtain 275 baseline instances (left) and 585 baseline instances (right) using BrightSpot is displayed in red. In blue is the price to obtain the same servers using On-Demand instances. BrightSpot shows a theoretical benefit to users on the order of 60\% price reduction.}
+    \label{Fig:serverpricing}
 \end{figure}
 
-\ref{Fig:125servercost} and \ref{Fig:325servercost} show our results for a cost analysis at 2 different desired states. In both graphs, the red line represents the cost in terms of dollars per hour to obtain the given availability percentage for BrightSpot. The blue line represents the On-Demand cost for holding that number of baseline server instances. Both graphs show a strikingly similar result, being that the expected cost to utilize BrightSpot for a user's web service is approximately one third of the cost of the On-Demand system implementation. \par
+\ref{Fig:serverpricing} show our results for a cost analysis at 2 different desired states. In both graphs, the red line represents the cost in terms of dollars per hour to obtain the given availability percentage for BrightSpot. The blue line represents the On-Demand cost for holding that number of baseline server instances. Both graphs show a strikingly similar result, being that the expected cost to utilize BrightSpot for a user's web service is approximately one third of the cost of the On-Demand system implementation. \par
 
-This is clearly a very good sign for moving forward in the BrightSpot implementation. Even if the initial cost calculations have an error of 100\%, we would still end up saving money by utilizing BrightSpot as opposed to an On-Demand implementation of the same system. One might notice that there is a spike at the very end of the BrightSpot cost line in \ref{Fig:325servercost}. This is caused by the greedy algorithm not considering the size of the last obtained resources and, in the case of our testing, it just happened to be the case that the last obtained instance provided many baseline servers. This caused the cost to spike up slightly, however given BrightSpot's secondary use, as well as the slight impact made by this addition, this is not seen as a problematic issue.\par
+This is clearly a very good sign for moving forward in the BrightSpot implementation. Even if the initial cost calculations have an error of 100\%, we would still end up saving money by utilizing BrightSpot as opposed to an On-Demand implementation of the same system. One might notice that there is a spike at the very end of the BrightSpot price lines in \ref{Fig:serverpricing}. This is caused by the greedy algorithm not considering the size of the last obtained resources and, in the case of our testing, it just happened to be the case that the last obtained instance provided many baseline servers. This caused the cost to spike up slightly, however given BrightSpot's secondary use, as well as the slight impact made by this addition, this is not seen as a problematic issue.\par
 
-However, we would have also expected to see a similar spike cost graphs. This is because the higher the availability already is, the less impact an additional server is going to make on total system availability, as it is mostly adding availability that is already covered by other servers. There are two reasons this is not as noticeable in \ref{Fig:125servercost} nor in many other data sets we tested. First, the approximation formula used makes getting an availability accurate to .01\% difficult, so it is likely not ending exactly there and simply gets very close to this value. This is a non-concern in terms of actual system availability, however, because when an instance is lost, BrightSpot will be obtaining replacements immediately, and the extra servers we have already obtained should support the system until then.\par
+However, we would have also expected to see a similar spike cost graphs. This is because the higher the availability already is, the less impact an additional server is going to make on total system availability, as it is mostly adding availability that is already covered by other servers. In some testing performed, there was absolutely no change in cost in the final ten percent of availability. There are two reasons this is the case. First, the approximation formula used makes getting an availability accurate to .01\% difficult, so it is likely not ending exactly there and simply gets very close to this value. This is a non-concern in terms of actual system availability, however, because when an instance is lost, BrightSpot will be obtaining replacements immediately, and the extra servers we have already obtained should support the system until then.\par
 
 Another cause for the lack of expected pricing spike would be that in the testing shown, we used a bid that provided above 90\% availability of every instance type, generally above 95\%. This means that just obtaining the correct number of baselines is already nearly reaching our availability goal, so generally the addition of one to two more is all that is needed. When only adding so few, the price continues to increase mostly linearly.
 
@@ -458,20 +487,24 @@ Another cause for the lack of expected pricing spike would be that in the testin
 
 \begin{figure}
 	\begin{minipage}{0.49\textwidth}
-    	\frame{\includegraphics[width=\linewidth]{125ServersAvailabilityExcess}}
-        \caption{125 Servers}\label{Fig:125serverexcess}
+    	\frame{\includegraphics[width=\linewidth]{275ServersAvailabilityExcess}}
+        %\caption{275 Servers}\label{Fig:275serverexcess}
     \end{minipage}
     \begin{minipage}{0.49\textwidth}
-    	\frame{\includegraphics[width=\linewidth]{325ServersAvailabilityExcess}}
-        \caption{325 Servers}\label{Fig:325serverexcess}
+    	\frame{\includegraphics[width=\linewidth]{585ServersAvailabilityExcess}}
+        %\caption{585 Servers}\label{Fig:585serverexcess}
     \end{minipage}
+    \caption{The excess server availability created when BrightSpot chooses instance types for 275 baseline instances (left) and 585 baseline instances (right). This was measured by taking a look at every percentage point for the servers available and determining how many of the excess servers are theoretically available if that percentage of availability is met. In other words, if we achieved 100\% availability for a system needing 585 baselines, we should have access to the number of excess servers shown at 100\%, being just below 40 baseline servers, most of the time.}
+    \label{Fig:excessservers}
 \end{figure}
 
-Depicted in \ref{Fig:125serverexcess} and \ref{Fig:325serverexcess} one can see the availability of excess servers we have access to. The plot is of the total number of servers available over the percentage of availability. This means that the line depicts the number of total servers available at the percentages displayed on the x-axis. As one can see, thanks to the right bidding strategy producing instances that will be available most of the time to us, generally 90\% of the time or more, the number of total baseline servers available to us is the same as the number of total baseline server instances we have obtained until we aim for very high percentages of availability.\par
+Depicted in \ref{Fig:excessservers} are the availabilities of excess servers we have access to. The plot is of the total number of excess baseline servers available over the percentage of desired availability. This means that the line depicts the number of total servers available at the percentages displayed on the x-axis. The above graphs show a very steady line for most of the target availabilities. This means that if we desired 585 servers 50\% of the time, we would expect to almost never have to use our excess servers. This is the particular case where our bid has given us spot instances that are 95\% or higher available to us. \par
 
-If we analyze this data further, we can see exactly how many extra servers we have, multiply that by the percent of the time they are available, choose some length of time, and determine exactly how much excess computing power we have available for us in that time. For instance, if we look at \ref{Fig:325serverexcess}, we see that we have obtained 390 servers for approximately 85\% of the time. Then, we see a fairly steady decline at every percentage until we reach 360 available servers. The loss of 30 baseline servers across 15\% of the time yields a drop of about two servers per percentage point.\par
+If we take this view to the highest end, 100\%, then we are able to see the highest amount of excess servers we are likely to tap into. This calculation is performed by performing our availability calculation at every percent, but instead of comparing the amount of servers we have to the desired state, we are testing the availability of all servers together. In other words, we are now obtaining the amount of time that all of the servers we have obtained will all be available to us. Given our high bid, this is the all of them for most of the time.
 
-With this, we can determine how many servers we had at every minute for 100 minutes. For 85 minutes, we have 65 extra servers. For 1 minute, we have 63 extra servers, and so on. Once reasoned out, this yields an average of 62 servers in excess at all times. Using this knowledge, a user may then begin to plan out how to best utilize this space for a background process, such as computationally heavy sorting.
+When we reach a point when not all of the servers we have obtained are available to us, we decrement the amount of servers we are checking against, calculate availability again, and iterate this process until we have 100\% availability for that number of servers. This provides with the amount of excess servers we can expect at all times at a given bid level. By decrementing, we mean to say that we reduce the number of servers we are testing for 100\% availability by one and then calculating availability for that number given our total number of obtained instances.
+
+If we were to experiment with lower bid levels, a much more linear relationship would be visible, where the excess servers would start dropping much earlier on. This is because our instances would be available to us less of the time, meaning we need more excess server space and this excess space would be utilized far more frequently.
 
 
 

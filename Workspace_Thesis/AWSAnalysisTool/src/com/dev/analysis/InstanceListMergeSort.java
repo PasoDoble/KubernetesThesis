@@ -5,7 +5,7 @@ public class InstanceListMergeSort {
 	private InstanceTypeDefinition[] sortingArray;
 	private InstanceTypeDefinition[] merger;
 	private int length;
-	private int sortFactor; //0 = availability, 1 = average price, 2 = simple hybrid sorting, 3 = BaselineFactor
+	private int sortFactor; //0 = availability, 1 = average price, 2 = simple hybrid sorting, 3 = On Demand Pricing
 
 	public InstanceListMergeSort(){}
 
@@ -34,7 +34,7 @@ public class InstanceListMergeSort {
 					break;
 			case 2: mergePartsSimpleHybrid(lower, mid, upper);
 					break;
-			case 3: mergePartsByBaselineFactor(lower, mid, upper);
+			case 3: mergePartsOnDemandPPB(lower, mid, upper);
 					break;
 			}
 		}
@@ -106,6 +106,43 @@ public class InstanceListMergeSort {
 		}
 		while(i <= mid){
 			//System.out.println("k = "+k+"i = "+i);
+			sortingArray[k] = merger[i];
+			k++;
+			i++;
+		}
+	}
+	
+	//Sort by On Demand PPB
+	public void mergePartsOnDemandPPB(int lower, int mid, int upper){
+		for (int i = lower; i <= upper; i++) {
+			merger[i] = sortingArray[i];
+		}
+		int i = lower;
+		int j = mid+1;
+		int k = lower;
+		while(i <= mid && j <= upper){
+			if(merger[i].pricePerBaselineOnDemand() < merger[j].pricePerBaselineOnDemand()){
+				sortingArray[k] = merger[i];
+				i++;
+			}
+			/*else if(iPPB == jPPB){
+				if(merger[i].getAvailability() <= merger[j].getAvailability()){
+					sortingArray[k] = merger[i];
+					i++;
+				}
+				else{
+					sortingArray[k] = merger[j];
+					j++;
+				}
+			}*/
+			else{
+				sortingArray[k] = merger[j];
+				j++;
+			}
+			k++;
+		}
+		while(i <= mid){
+			System.out.println("k = "+k+"i = "+i);
 			sortingArray[k] = merger[i];
 			k++;
 			i++;

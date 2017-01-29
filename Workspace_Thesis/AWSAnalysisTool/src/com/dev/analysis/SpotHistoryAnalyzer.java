@@ -85,9 +85,10 @@ public class SpotHistoryAnalyzer {
 	private String startTime;
 	private String endTime;
 	
-	private double baseSpeed;
+	//private double baseSpeed;
 	private double baseMem;
-	private int baseCores;
+	//private int baseCores;
+	private double baseECU;
 	private int desiredState;
 	private int numberInstanceTypes;
 	
@@ -155,6 +156,8 @@ public class SpotHistoryAnalyzer {
 		
 	}
 	
+	// Initializes the dictionary of instance types
+	// This is used for finding the right amount of computing power and determining on demand cost
 	public void setupDictionary(){
 		//General use
 		
@@ -166,55 +169,70 @@ public class SpotHistoryAnalyzer {
 		//instanceDictionary.put("t2.medium", new InstanceTypeDefinition("t2.medium", 3.3, 2, 4.0, 0, .052, newID++));
 		//instanceDictionary.put("t2.large", new InstanceTypeDefinition("t2.large", 3.0, 2, 8.0, 0, .104, newID++));
 		
-		instanceDictionary.put("m4.large", new InstanceTypeDefinition("m4.large", 2.4, 2, 8.0, 1, .12, newID++));
-		instanceDictionary.put("m4.xlarge", new InstanceTypeDefinition("m4.xlarge", 2.4, 4, 16.0, 2, .239, newID++));
-		instanceDictionary.put("m4.2xlarge", new InstanceTypeDefinition("m4.2xlarge", 2.4, 8, 32.0, 2, .479, newID++));
-		instanceDictionary.put("m4.4xlarge", new InstanceTypeDefinition("m4.4xlarge", 2.4, 16, 64.0, 2, .958, newID++));
-		instanceDictionary.put("m4.10xlarge", new InstanceTypeDefinition("m4.10xlarge", 2.4, 40, 160.0, 3, 2.394, newID++));
+		//Format for an instance type: name, ec2 compute units, RAM, networking strength, On-Demand Cost, ID
+		instanceDictionary.put("m4.large", new InstanceTypeDefinition("m4.large", 6.5, 8.0, 1, .108, newID++));
+		instanceDictionary.put("m4.xlarge", new InstanceTypeDefinition("m4.xlarge", 13.0, 16.0, 2, .215, newID++));
+		instanceDictionary.put("m4.2xlarge", new InstanceTypeDefinition("m4.2xlarge", 26.0, 32.0, 2, .431, newID++));
+		instanceDictionary.put("m4.4xlarge", new InstanceTypeDefinition("m4.4xlarge", 53.5, 64.0, 2, .862, newID++));
+		instanceDictionary.put("m4.10xlarge", new InstanceTypeDefinition("m4.10xlarge", 124.5, 160.0, 3, 2.155, newID++));
+		//instanceDictionary.put("m4.16xlarge", new InstanceTypeDefinition("m4.16xlarge", 188.0, 160.0, 3, 3.447, newID++));
 		
-		instanceDictionary.put("m3.medium", new InstanceTypeDefinition("m3.medium", 2.5, 1, 3.75, 1, .067, newID++));
-		instanceDictionary.put("m3.large", new InstanceTypeDefinition("m3.large", 2.5, 2, 7.5, 1, .133, newID++));
-		instanceDictionary.put("m3.xlarge", new InstanceTypeDefinition("m3.xlarge", 2.5, 4, 15.0, 2, .266, newID++));
-		instanceDictionary.put("m3.2xlarge", new InstanceTypeDefinition("m3.2xlarge", 2.5, 8, 30.0, 2, .532, newID++));
+		instanceDictionary.put("m3.medium", new InstanceTypeDefinition("m3.medium", 3.0, 3.75, 1, .067, newID++));
+		instanceDictionary.put("m3.large", new InstanceTypeDefinition("m3.large", 6.5, 7.5, 1, .133, newID++));
+		instanceDictionary.put("m3.xlarge", new InstanceTypeDefinition("m3.xlarge", 13.0, 15.0, 2, .266, newID++));
+		instanceDictionary.put("m3.2xlarge", new InstanceTypeDefinition("m3.2xlarge", 26.0, 30.0, 2, .532, newID++));
 		
 		//compute optimized
-		instanceDictionary.put("c4.large", new InstanceTypeDefinition("c4.large", 2.9, 2, 3.75, 1, .105, newID++));
-		instanceDictionary.put("c4.xlarge", new InstanceTypeDefinition("c4.xlarge", 2.9, 4, 7.5, 2, .209, newID++));
-		instanceDictionary.put("c4.2xlarge", new InstanceTypeDefinition("c4.2xlarge", 2.9, 8, 15.0, 2, .419, newID++));
-		instanceDictionary.put("c4.4xlarge", new InstanceTypeDefinition("c4.4xlarge", 2.9, 16, 30.0, 2, .838, newID++));
-		instanceDictionary.put("c4.8xlarge", new InstanceTypeDefinition("c4.8xlarge", 2.9, 36, 60.0, 3, 1.675, newID++));
+		instanceDictionary.put("c4.large", new InstanceTypeDefinition("c4.large", 8.0, 3.75, 1, .1, newID++));
+		instanceDictionary.put("c4.xlarge", new InstanceTypeDefinition("c4.xlarge", 16.0, 7.5, 2, .199, newID++));
+		instanceDictionary.put("c4.2xlarge", new InstanceTypeDefinition("c4.2xlarge", 31.0, 15.0, 2, .398, newID++));
+		instanceDictionary.put("c4.4xlarge", new InstanceTypeDefinition("c4.4xlarge", 62.0, 30.0, 2, .796, newID++));
+		instanceDictionary.put("c4.8xlarge", new InstanceTypeDefinition("c4.8xlarge", 132.0, 60.0, 3, 1.591, newID++));
 		
-		instanceDictionary.put("c3.large", new InstanceTypeDefinition("c3.large", 2.8, 2, 3.75, 1, .105, newID++));
-		instanceDictionary.put("c3.xlarge", new InstanceTypeDefinition("c3.xlarge", 2.8, 4, 7.5, 1, .21, newID++));
-		instanceDictionary.put("c3.2xlarge", new InstanceTypeDefinition("c3.2xlarge", 2.8, 8, 15.0, 2, .42, newID++));
-		instanceDictionary.put("c3.4xlarge", new InstanceTypeDefinition("c3.4xlarge", 2.8, 16, 30.0, 2, .84, newID++));
-		instanceDictionary.put("c3.8xlarge", new InstanceTypeDefinition("c3.8xlarge", 2.8, 32, 60.0, 3, .168, newID++));
+		instanceDictionary.put("c3.large", new InstanceTypeDefinition("c3.large", 7.0, 3.75, 1, .105, newID++));
+		instanceDictionary.put("c3.xlarge", new InstanceTypeDefinition("c3.xlarge", 14.0, 7.5, 1, .21, newID++));
+		instanceDictionary.put("c3.2xlarge", new InstanceTypeDefinition("c3.2xlarge", 28.0, 15.0, 2, .42, newID++));
+		instanceDictionary.put("c3.4xlarge", new InstanceTypeDefinition("c3.4xlarge", 55.0, 30.0, 2, .84, newID++));
+		instanceDictionary.put("c3.8xlarge", new InstanceTypeDefinition("c3.8xlarge", 108.0, 60.0, 3, 1.68, newID++));
 		
 		//memory optimized, low cost per GB RAM
-		instanceDictionary.put("r3.large", new InstanceTypeDefinition("r3.large", 2.5, 2, 15.25, 1, .166, newID++));
-		instanceDictionary.put("r3.xlarge", new InstanceTypeDefinition("r3.xlarge", 2.5, 4, 30.5, 1, .333, newID++));
-		instanceDictionary.put("r3.2xlarge", new InstanceTypeDefinition("r3.2xlarge", 2.5, 8, 61, 2, .665, newID++));
-		instanceDictionary.put("r3.4xlarge", new InstanceTypeDefinition("r3.4xlarge", 2.5, 16, 122, 2, 1.33, newID++));
-		instanceDictionary.put("r3.8xlarge", new InstanceTypeDefinition("r3.8xlarge", 2.5, 32, 244, 3, 2.66, newID++));
+		instanceDictionary.put("r3.large", new InstanceTypeDefinition("r3.large", 6.5, 15.0, 1, .166, newID++));
+		instanceDictionary.put("r3.xlarge", new InstanceTypeDefinition("r3.xlarge", 13.0, 30.5, 1, .333, newID++));
+		instanceDictionary.put("r3.2xlarge", new InstanceTypeDefinition("r3.2xlarge", 26.0, 61.0, 2, .665, newID++));
+		instanceDictionary.put("r3.4xlarge", new InstanceTypeDefinition("r3.4xlarge", 52.0, 122.0, 2, 1.33, newID++));
+		instanceDictionary.put("r3.8xlarge", new InstanceTypeDefinition("r3.8xlarge", 104.0, 244.0, 3, 2.66, newID++));
+		
+		//TODO : When possible, re run analysis including R4, a new memory optimized instance type
+		/*
+		instanceDictionary.put("r4.large", new InstanceTypeDefinition("r4.large", 7.0, 15.0, 1, 0.133, newID++));
+		instanceDictionary.put("r4.xlarge", new InstanceTypeDefinition("r4.xlarge", 13.5, 30.5, 1, 0.266, newID++));
+		instanceDictionary.put("r4.2xlarge", new InstanceTypeDefinition("r4.2xlarge", 27.0, 61.0, 2, 0.532, newID++));
+		instanceDictionary.put("r4.4xlarge", new InstanceTypeDefinition("r4.4xlarge", 53.0, 122.0, 2, 1.064, newID++));
+		instanceDictionary.put("r4.8xlarge", new InstanceTypeDefinition("r4.8xlarge", 99.0, 244.0, 3, 2.128, newID++));
+		instanceDictionary.put("r4.16xlarge", new InstanceTypeDefinition("r4.16xlarge", 195.0, 244.0, 3, 4.256, newID++));
+		 */
 		
 		numberInstanceTypes = newID;
 		
 		//NOT INCLUDING G2, I2, D2 Instances that focus on graphics and storage
 	}
 	
+	// Updates the dictionary to compare baseline amounts rather than absolute amounts
+	// The ratios of instances in terms of ahow many baselines they provide is a flat integer
+	// We do this because a baseline is presumed to be the minimum computing power needed to run a single, full replication of the user's codebase
+	// TODO: Consider returning here to allow partial baselines. Discuss with Professor Irwin
 	public void setupDictionaryWithBaseline(){
 		Iterator it = instanceDictionary.entrySet().iterator();
 	    while (it.hasNext()) {
 	    	Map.Entry<String, InstanceTypeDefinition> pair = (Map.Entry)it.next();
 	    	
 	    	InstanceTypeDefinition thisInstance = instanceDictionary.get(pair.getValue().getLabel());
-			int thisCores = thisInstance.getCores();
-			double thisSpeed = thisInstance.getSpeed();
+			double thisECU = thisInstance.getECU();
 			double thisMem = thisInstance.getMem();
 			
 			//double coreRatio = ((double)thisCores)/((double)baseCores);
 			//double speedRatio = thisSpeed/baseSpeed;
-			double cpuRatio = (((double)thisCores)*thisSpeed)/(((double)baseCores)*baseSpeed); //Judge the speed by the total computing speed
+			double cpuRatio = thisECU/baseECU; //Judge the speed by the ECU computed by Amazon
 			double memRatio = thisMem/baseMem;
 			
 			int ratioOfBaselines;
@@ -237,11 +255,14 @@ public class SpotHistoryAnalyzer {
 	//Requests user to enter baseline values for each baseline value
 	public void setBaseline(){
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Please enter the processor speed needed (in GHz) per instance: ");
+		/*System.out.println("Please enter the processor speed needed (in GHz) per instance: ");
 		baseSpeed = scan.nextDouble();
 		
 		System.out.println("Please enter the number of cores needed per instance: ");
-		baseCores = scan.nextInt();
+		baseCores = scan.nextInt();*/
+		
+		System.out.println("Please enter the amount of ECU needed per instance: ");
+		baseECU = scan.nextDouble();
 		
 		System.out.println("Please enter the amount of RAM needed (in GB) per instance: ");
 		baseMem = scan.nextDouble();
@@ -255,14 +276,13 @@ public class SpotHistoryAnalyzer {
 	//Sets a standard baseline in the case that you do not want to be asked for baseline values at start
 	public void setBaselineTest(){
 		//Baseline for maybe 1000 users per baseline
-		baseSpeed = 2;
-		baseCores = 1;
+		baseECU = 1;
 		baseMem = 1;
-		desiredState = 250;
+		desiredState = 200;
 	}
 	
-	//Lists all Instance types in order of how many baseline instances they provide
-	public InstanceTypeDefinition[] listInstanceTypesByBaselineAmount(){
+	//Lists all Instance types in order of their on demand price per baseline
+	public InstanceTypeDefinition[] listInstanceTypesByOnDemandPPB(){
 		InstanceTypeDefinition[] instanceArray = new InstanceTypeDefinition[dictionarySize];
 		int instanceCount = 0;
 		Iterator it = instanceDictionary.entrySet().iterator();
@@ -368,6 +388,7 @@ public class SpotHistoryAnalyzer {
 		Files.copy(newRaw, oldRaw, options);
 	}
 	
+	// Creates a dictionary of all separated data files
 	public void createFileDictionary(){
 		this.separatedDataFiles.clear();
 		File directory = new File(baseDirectory+"HistoryData");
@@ -377,6 +398,7 @@ public class SpotHistoryAnalyzer {
 		}
 	}
 	
+	// Creates a dictionary of all basleined data files
 	public void createBaselinedFileDictionary(){
 		this.baselinedDataFiles.clear();
 		File directory = new File(baseDirectory+"HistoryDataBaselined");
@@ -422,6 +444,7 @@ public class SpotHistoryAnalyzer {
 		}
 	}
 	
+	// Gets an ordered list of the instance types available
 	public void createOrderedIDFileList() throws Exception{
 			InstanceTypeDefinition[] instanceArray = new InstanceTypeDefinition[dictionarySize];
 			Iterator it = instanceDictionary.entrySet().iterator();
@@ -477,6 +500,15 @@ public class SpotHistoryAnalyzer {
 		FileWriter r32xl = new FileWriter(new File(directory,"r3.2xlarge.txt"));
 		FileWriter r34xl = new FileWriter(new File(directory,"r3.4xlarge.txt"));
 		FileWriter r38xl = new FileWriter(new File(directory,"r3.8xlarge.txt"));
+		//TODO : When possible, re run analysis including R4, a new memory optimized instance type
+		/*
+		FileWriter r4l = new FileWriter(new File(directory,"r4.large.txt"));
+		FileWriter r4xl = new FileWriter(new File(directory,"r4.xlarge.txt"));
+		FileWriter r42xl = new FileWriter(new File(directory,"r4.2xlarge.txt"));
+		FileWriter r44xl = new FileWriter(new File(directory,"r4.4xlarge.txt"));
+		FileWriter r48xl = new FileWriter(new File(directory,"r4.8xlarge.txt"));
+		FileWriter r416xl = new FileWriter(new File(directory,"r4.16xlarge.txt"));
+		 */
 		
 		File rawFile = new File("RawAWSData.txt");
 		//File rawFile = new File(this.baseDirectory,"RawAWSData.txt"); //Just to make certain it stays in the correct directory
@@ -563,6 +595,21 @@ public class SpotHistoryAnalyzer {
 							break;
 			case "r3.8xlarge": r38xl.write(writtenEntry);
 							break;
+			//TODO : When possible, re run analysis including R4, a new memory optimized instance type
+			/*
+			case "r4.large": r4l.write(writtenEntry);
+							break;
+			case "r4.xlarge": r4xl.write(writtenEntry);
+							break;
+			case "r4.2xlarge": r42xl.write(writtenEntry);
+							break;
+			case "r4.4xlarge": r44xl.write(writtenEntry);
+							break;
+			case "r4.8xlarge": r48xl.write(writtenEntry);
+							break;
+			case "r4.16xlarge": r416xl.write(writtenEntry);
+							break;
+			 */
 
 			}
 			
@@ -602,6 +649,15 @@ public class SpotHistoryAnalyzer {
 		r32xl.close();
 		r34xl.close();
 		r38xl.close();
+		//TODO : When possible, re run analysis including R4, a new memory optimized instance type
+		/*
+		r4l.close();
+		r4xl.close();
+		r42xl.close();
+		r44xl.close();
+		r48xl.close();
+		r416xl.close();
+		 */
 		br.close();
 		
 		//Added for finding the start and end date of all files
@@ -614,6 +670,7 @@ public class SpotHistoryAnalyzer {
 		this.considerNullFiles();
 	}
 	
+	// inputs empty data into files that produce no results for separated data files
 	public void considerNullFiles() throws IOException{
 		for(File file : separatedDataFiles){
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -626,7 +683,8 @@ public class SpotHistoryAnalyzer {
 		}
 	}
 	
-	//needs to be run AFTER the creation of File dictionary
+	//Needs to be run AFTER the creation of File dictionary
+	// Used to calculate the price per baseline by only comparing FULL baseline ratios. No partials are considered
 	public void calculatePricePerBaseline() throws IOException{
 		this.createFileDictionary();
 		for(File file : this.separatedDataFiles){
@@ -640,25 +698,17 @@ public class SpotHistoryAnalyzer {
 			String instanceName = fileName.substring(0, pos);
 			//System.out.println(fileName);
 			
-			//Obtain Instance Type Definition, with values of Speed, Cores, and Mem
+			//Obtain Instance Type Definition, with values of ECU and Mem
 			InstanceTypeDefinition thisInstance = instanceDictionary.get(instanceName);
-			int thisCores = thisInstance.getCores();
-			double thisSpeed = thisInstance.getSpeed();
+			double thisECU = thisInstance.getECU();
 			double thisMem = thisInstance.getMem();
 			
-			//double coreRatio = ((double)thisCores)/((double)baseCores);
-			//double speedRatio = thisSpeed/baseSpeed;
-			double cpuRatio = (((double)thisCores)*thisSpeed)/(((double)baseCores)*baseSpeed); //Judge the speed by the total computing speed
+			double cpuRatio = thisECU/baseECU; //Judge the speed by the total computing speed as determined by Amazon
 			double memRatio = thisMem/baseMem;
 			
 			int ratioOfBaselines;
 			
-			/*if(coreRatio < speedRatio && coreRatio < memRatio){
-				ratioOfBaselines = (int)coreRatio;
-			}
-			else if(speedRatio < coreRatio && speedRatio < memRatio){
-				ratioOfBaselines = (int)speedRatio;
-			}*/
+			//Determine number of baselines by the ratio of limiting factor of the instance (if more proportional RAM is needed, than this is the limiting factor)
 			if(cpuRatio < memRatio){
 				ratioOfBaselines = (int)cpuRatio;
 			}
@@ -979,11 +1029,10 @@ public class SpotHistoryAnalyzer {
 			String typeName = temp.getLabel();
 			InstanceTypeDefinition thisInstance =  instanceDictionary.get(typeName);
 			
-			int thisCores = thisInstance.getCores();
-			double thisSpeed = thisInstance.getSpeed();
+			double thisECU = thisInstance.getECU();
 			double thisMem = thisInstance.getMem();
 			
-			double cpuRatio = (((double)thisCores)*thisSpeed)/(((double)baseCores)*baseSpeed); //Judge the speed by the total computing speed
+			double cpuRatio = thisECU/baseECU; //Judge the speed by the total computing speed as determined by Amazon
 			double memRatio = thisMem/baseMem;
 			
 			int ratioOfBaselines;
@@ -1016,7 +1065,7 @@ public class SpotHistoryAnalyzer {
 		FileWriter listWriter = new FileWriter(availabilityChart);
 		
 		//for writing On Demand Prices for graphing
-		String nextFileName = desiredState+"ServersAvailabilityOD.txt";
+		String nextFileName = desiredState+"ServersPricingOD.txt";
 		File availabilityOnDemandChart = new File(mainDir, nextFileName);
 		FileWriter listODWriter = new FileWriter(availabilityOnDemandChart);
 		int onDemandPercentCount = 0;
@@ -1227,10 +1276,10 @@ public class SpotHistoryAnalyzer {
 	}
 	
 	
-	
+	// Obtains a list of the instances obtained for an on demand solution
 	public InstanceTypeDefinition[] findOnDemandSolution(){
 		ArrayList<InstanceTypeDefinition> tempInstanceList = new ArrayList<InstanceTypeDefinition>();
-		InstanceTypeDefinition[] sortedArray = this.listInstanceTypesByBaselineAmount();
+		InstanceTypeDefinition[] sortedArray = this.listInstanceTypesByOnDemandPPB();
 		//for(int l = 0; l< sortedArray.length; l++){
 		//	System.out.println(sortedArray[l].getLabel()+" has Baselines: "+sortedArray[l].getBaselineFactor());
 		//}
@@ -1251,7 +1300,7 @@ public class SpotHistoryAnalyzer {
 					System.out.println("In If 2");
 					for(int j = 0; j<sortedArray.length; j++){
 						//System.out.println("In For 2");
-						if(sortedArray[j].getBaselineFactor() == 1 || j+1 > sortedArray.length || (j+1 <= sortedArray.length && sortedArray[j+1].getBaselineFactor() < 1)){
+						if(sortedArray[j].getBaselineFactor() == 1 || j+1 >= sortedArray.length || (j+1 < sortedArray.length && sortedArray[j+1].getBaselineFactor() < 1)){
 							tempInstanceList.add(sortedArray[j]);
 							numBaselines += sortedArray[j].getBaselineFactor();
 							break;

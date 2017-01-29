@@ -1,0 +1,9 @@
+Change Log 1/29/2017
+
+Updated On-Demand costs to the latest values
+Updated calculations of baseline and equivalents to use Amazon's new measure of EC2 Compute Unit: They're method of comparing computing power between instance types
+	- InstanceTypeDefinition class to support new factor in place of CPU speed and number
+	- InstanceDictionary now initializes with these instead of CPU info
+	- All locations comparing computing power has been updated to use ECU instead of the available speed and number of cores as it was before
+With new pricing, had to change On-Demand algorithm to find the best Price Per Baseline for On-Demand instances
+Updated sort formerly used for sorting by number of baselines per instance to sort by price per on demand baseline

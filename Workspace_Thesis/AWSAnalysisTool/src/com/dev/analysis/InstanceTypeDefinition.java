@@ -11,6 +11,7 @@ public class InstanceTypeDefinition {
 	public int harddrive;
 	public int networking; //0=low, 1 = mod, 2 = high, 3= 10 Gigabit
 	public double onDemandPrice;
+	public double ec2ComputeUnit;
 	
 	public double highCost;
 	public double averageCost;
@@ -43,11 +44,24 @@ public class InstanceTypeDefinition {
 		instanceID = initID;
 	}
 	
+	public InstanceTypeDefinition(String l, double ecu, double r, int n, double odc, int initID){
+		label = l;
+		ec2ComputeUnit = ecu;
+		ram = r;
+		networking = n;
+		onDemandPrice = odc;
+		instanceID = initID;
+	}
+	
 	public InstanceTypeDefinition(String l, double h, double avg, double a){
 		label = l;
 		highCost = h;
 		averageCost = avg;
 		availability = a;
+	}
+	
+	public double pricePerBaselineOnDemand(){
+		return this.onDemandPrice/((double)baselineFactor);
 	}
 	
 	public String getLabel(){
@@ -118,4 +132,11 @@ public class InstanceTypeDefinition {
 		instanceID = newID;
 	}
 	
+	public double getECU(){
+		return this.ec2ComputeUnit;
+	}
+	
+	public void setECU(double newECU){
+		this.ec2ComputeUnit = newECU;
+	}
 }

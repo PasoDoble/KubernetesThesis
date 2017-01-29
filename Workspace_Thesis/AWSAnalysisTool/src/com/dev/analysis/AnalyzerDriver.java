@@ -29,12 +29,12 @@ public class AnalyzerDriver {
         try {
 			//spotHistory.analyzeHistory();
         	//spotHistory.separateRawData();
-        	//spotHistory.calculatePricePerBaseline();
-        	//spotHistory.tallyingTheAbsoluteCosts();
-        	//spotHistory.tallyingTheBaselinedCosts();
+        	spotHistory.calculatePricePerBaseline();
+        	spotHistory.tallyingTheAbsoluteCosts();
+        	spotHistory.tallyingTheBaselinedCosts();
         	spotHistory.createAvailabilityList();
         	InstanceTypeDefinition[] listOfThings = spotHistory.listBySimpleHybrid();
-        	//spotHistory.obtainInstances(listOfThings, 99.99);
+        	spotHistory.obtainInstances(listOfThings, 99.99);
         	boolean[][] timeMap = spotHistory.createAllInstancesTimeMap();
         	//double[][] interAvailabilityMap = spotHistory.determineInstanceIndependence(timeMap);
         	spotHistory.createOrderedIDFileList();
